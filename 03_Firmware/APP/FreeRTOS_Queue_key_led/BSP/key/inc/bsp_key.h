@@ -45,14 +45,14 @@
 
 //******************************** Defines **********************************//
 
-//*********************Thread_Func **********************//
-extern osThreadId_t key_TaskHandle;                 /* Key task handle */
-extern const osThreadAttr_t key_Task_attributes;    /* Key task attributes configuration */
-//*********************Thread_Func **********************//
+//******************** Thread_Func ********************//
+extern osThreadId_t key_TaskHandle;
+extern const osThreadAttr_t key_Task_attributes;
+//******************** Thread_Func ********************//
 
-//*********************Queue_Handler ********************//
-extern QueueHandle_t key_queue;                     /* Key message queue handle for inter-task communication */
-//*********************Queue_Handler ********************//
+//******************* Queue_Handler *******************//
+extern QueueHandle_t key_queue;
+//******************* Queue_Handler *******************//
 
 /**
  * @brief Key operation status enumeration
@@ -61,25 +61,25 @@ extern QueueHandle_t key_queue;                     /* Key message queue handle 
  */
 typedef enum
 {
-    KEY_OK                = 0,           /* Operation completed successfully */
-    KEY_ERROR             = 1,           /* Run-time error without specific case matched */
-    KEY_ERRORTIMEOUT      = 2,           /* Operation failed with timeout */
-    KEY_ERRORRESOURCE     = 3,           /* Resource not available */
-    KEY_ERRORPARAMETER    = 4,           /* Parameter error */
+    KEY_OK                = 0,           /* Success */
+    KEY_ERROR             = 1,           /* General error */
+    KEY_ERRORTIMEOUT      = 2,           /* Timeout */
+    KEY_ERRORRESOURCE     = 3,           /* Resource unavailable */
+    KEY_ERRORPARAMETER    = 4,           /* Invalid parameter */
     KEY_ERRORNOMEMORY     = 5,           /* Out of memory */
-    KEY_ERRORISR          = 6,           /* Not allowed in ISR context */
-    KEY_RESERVED          = 0x7FFFFFFF   /* Reserved value */
+    KEY_ERRORISR          = 6,           /* Not allowed in ISR */
+    KEY_RESERVED          = 0x7FFFFFFF   /* Reserved */
 } key_status_t;
 
 /**
- * @brief Key press status enumeration
- * 
- * Defines the physical state of the key
+ * @brief Key press status
  */
 typedef enum
 {
-    KEY_PRESSED           = 0,           /* Key is pressed */
-    KEY_NOT_PRESSED       = 1,           /* Key is not pressed */
+    KEY_PRESSED           = 0,                            /*     Key pressed */
+    KEY_NOT_PRESSED       = 1,                            /* Key not pressed */
+    KEY_SHORT_PRESSED     = 2,                            /*     Short press */
+    KEY_LONG_PRESSED      = 3,                            /*      Long press */
 } key_press_status_t;
 //******************************** Defines **********************************//
 
@@ -100,35 +100,43 @@ typedef enum
  *                         - KEY_PRESSED: Key is pressed
  *                         - KEY_NOT_PRESSED: Key is not pressed
  * 
- * @return key_status_t : Function execution status
- *                        - KEY_OK: Key press detected
- *                        - KEY_ERRORTIMEOUT: Timeout without detecting key press
+ * @return key_status_t : Status (KEY_OK or KEY_ERRORTIMEOUT)
  * 
- * @note This function blocks execution for up to 1000 loop iterations
- * */
-key_status_t key_scan(key_press_status_t *key_value);
+ * @note Blocks up to 1000 iterations
+ */
+key_status_t key_scan_short_long_press          (key_press_status_t *key_value,
+                                                    uint32_t short_press_time);
+
+/**
+ * @brief Key scanning function
+ * 
+ * This function detects whether the key is pressed by reading the GPIO pin state.
+ * It uses polling method with a maximum of 1000 attempts.
+ * 
+ * Execution steps:
+ *  1. Loop to read GPIO pin state
+ *  2. If key press is detected (GPIO is low level), return success
+ *  3. If timeout occurs without detecting key press, return timeout error
+ *  
+ * @param[out] key_value : Pointer to key state, returns whether key is pressed
+ *                         - KEY_PRESSED: Key is pressed
+ *                         - KEY_NOT_PRESSED: Key is not pressed
+ * 
+ * @return key_status_t : Status (KEY_OK or KEY_ERRORTIMEOUT)
+ * 
+ * @note Blocks up to 1000 iterations
+ */
+key_status_t key_scan                          (key_press_status_t *key_value);
 
 /**
  * @brief Key task function
  * 
- * FreeRTOS task function that periodically scans key state and handles key events.
- * When a key press is detected, it sends the counter value to the message queue
- * for other tasks to use.
+ * @param[in] argument : Task parameter (unused)
  * 
- * Execution steps:
- *  1. Create key message queue (10 elements, each element size is uint32_t)
- *  2. Enter infinite loop
- *  3. Call key_scan() to scan key state
- *  4. If key press is detected, send counter value to queue
- *  5. Delay 100ms and continue to next iteration
- *  
- * @param[in] argument : FreeRTOS task parameter (unused)
+ * @return void
  * 
- * @return void : No return value (task function should not return)
- * 
- * @note This function runs as FreeRTOS task with priority osPriorityHigh
- * @note Task stack size is 512 bytes (128*4)
- * */
+ * @note Priority: High, Stack: 512 bytes, Period: 100ms
+ */
 void key_task_func(void *argument);
 
 //******************************** Declaring ********************************//

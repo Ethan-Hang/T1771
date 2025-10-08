@@ -94,7 +94,7 @@ void MX_FREERTOS_Init(void) {
   /* creation of defaultTask */
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
   /* USER CODE BEGIN RTOS_THREADS */
-  key_TaskHandle    = osThreadNew(key_task_func, NULL, &key_Task_attributes);
+  // key_TaskHandle    = osThreadNew(key_task_func, NULL, &key_Task_attributes);
   led_TaskHandle    = osThreadNew(led_task_func, NULL, &led_Task_attributes);
 
   /* add threads, ... */
@@ -115,34 +115,68 @@ void MX_FREERTOS_Init(void) {
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void *argument)
 {
-  /* USER CODE BEGIN StartDefaultTask */
-  uint32_t received_value = 0;
-  led_operation_t led_ops_value  = LED_ON;
-  /* Infinite loop */
-  for(;;)
-  {
-    printf("StartDefaultTask\r\n");
-    if (key_queue != NULL)
-    {
-      if ( xQueueReceive( key_queue, &received_value, 100 ) == pdPASS )
-      {
-        printf("Key Tick Received: [%lu]\r\n", received_value);
+    /* USER CODE BEGIN StartDefaultTask */
+    //********************************APP TASK*********************************//
 
-        led_ops_value = LED_TOGGLE;
-        if (pdTRUE == xQueueSendToFront(led_queue, &led_ops_value, 0))
+    // uint32_t       received_value =      0;
+    // led_operation_t led_ops_value = LED_ON;
+    key_status_t       ret_key_status  =           KEY_OK;
+    key_press_status_t key_value       =  KEY_NOT_PRESSED;
+    led_operation_t    led_ops_value   = LED_INITED_VALUE;
+    /* Infinite loop */
+    for (;;)
+    {
+        printf("APP task is living\r\n");
+        ret_key_status = key_scan_short_long_press(&key_value,
+                                                        1000);
+
+        if ( KEY_OK == ret_key_status )
         {
-          printf("led Send Successfully!\r\n");
+            if ( KEY_SHORT_PRESSED == key_value )
+            {
+                printf("Key Short Pressed! at [%d] tick\r\n", HAL_GetTick());
+                
+                led_ops_value = LED_TOGGLE;
+                if (pdTRUE == xQueueSendToFront(led_queue, &led_ops_value, 0))
+                {
+                    printf("LED_TOGGLE Send Successfully! at [%d] tick\r\n", 
+                                                             HAL_GetTick());
+                }
+            }
+            else if ( KEY_LONG_PRESSED == key_value )
+            {
+                printf("Key Long  Pressed! at [%d] tick\r\n", HAL_GetTick());
+                
+                led_ops_value = LED_BLINK_3_TIMES;
+                if (pdTRUE == xQueueSendToFront(led_queue, &led_ops_value, 0))
+                {
+                    printf("LED_BLINK_3_TIMES Send Successfully! at [%d] tick\r\n", 
+                                                                    HAL_GetTick());
+                }
+            }
         }
-      }
+
+        // printf("StartDefaultTask\r\n");
+        // if (key_queue != NULL)
+        // {
+        //   if ( xQueueReceive( key_queue, &received_value, 100 ) == pdPASS )
+        //   {
+        //     printf("Key Tick Received: [%lu]\r\n", received_value);
+
+        //     led_ops_value = LED_TOGGLE;
+        //     if (pdTRUE == xQueueSendToFront(led_queue, &led_ops_value, 0))
+        //     {
+        //       printf("led Send Successfully!\r\n");
+        //     }
+        //   }
+        // }
+        osDelay(100);
     }
-    osDelay(1);
-  }
-  
-  /* USER CODE END StartDefaultTask */
+
+    /* USER CODE END StartDefaultTask */
 }
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
 
 /* USER CODE END Application */
-
