@@ -4,6 +4,10 @@
         "bsp_key.h": "c",
         "stm32f4xx_hal_gpio.h": "c",
         "queue.h": "c",
-        "bsp_led.h": "c"
+        "bsp_led.h": "c",
+        "stm32f4xx_hal.h": "c",
+        "freertos.h": "c",
+        "cmsis_os.h": "c",
+        "task.h": "c"
     }
 }
