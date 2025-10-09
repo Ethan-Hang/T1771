@@ -134,24 +134,28 @@ void StartDefaultTask(void *argument)
         {
             if ( KEY_SHORT_PRESSED == key_value )
             {
-                printf("Key Short Pressed! at [%d] tick\r\n", HAL_GetTick());
+                printf("Key Short Pressed!               at [%d] tick\r\n", 
+                                                            HAL_GetTick());
                 
                 led_ops_value = LED_TOGGLE;
                 if (pdTRUE == xQueueSendToFront(led_queue, &led_ops_value, 0))
                 {
-                    printf("LED_TOGGLE Send Successfully! at [%d] tick\r\n", 
-                                                             HAL_GetTick());
+                    printf("LED_TOGGLE Send Successfully!    at [%d] tick\r\n", 
+                                                                HAL_GetTick());
                 }
+                printf("After Send LED_TOGGLE            at [%d] tick\r\n", 
+                                                            HAL_GetTick());
             }
             else if ( KEY_LONG_PRESSED == key_value )
             {
-                printf("Key Long  Pressed! at [%d] tick\r\n", HAL_GetTick());
+                printf("Key Long  Pressed!               at [%d] tick\r\n",
+                                                            HAL_GetTick());
                 
                 led_ops_value = LED_BLINK_3_TIMES;
                 if (pdTRUE == xQueueSendToFront(led_queue, &led_ops_value, 0))
                 {
-                    printf("LED_BLINK_3_TIMES Send Successfully! at [%d] tick\r\n", 
-                                                                    HAL_GetTick());
+                    printf("BLINK Send Successfully          at [%d] tick\r\n",
+                                                                HAL_GetTick());
                 }
             }
         }

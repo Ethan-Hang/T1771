@@ -34,7 +34,7 @@ osThreadId_t led_TaskHandle;
 const osThreadAttr_t led_Task_attributes = {
     .name = "led_Task",                          /* Task name */
     .stack_size = 128 * 4,                       /* Stack: 512 bytes */
-    .priority = (osPriority_t) osPriorityLow, /* Priority: Normal */
+    .priority = (osPriority_t) osPriorityNormal, /* Priority: Normal */
 };
 //******************** Thread_Func **********************//
 
@@ -118,22 +118,23 @@ void led_task_func(void *argument)
     /* Task main loop */
     for (;;)
     {
-        printf("Hello_led_Thread\r\n");
+        printf("Hello  led  Thread\r\n");
 
         if ( led_queue != NULL )
         {
             /* Receive command from queue, timeout: 10 ticks */
             if ( pdTRUE == xQueueReceive(led_queue, &led_value, 10) )
             {
-                printf("Received led_queue value: [%d] at time [%d]\r\n",
-                       led_value, HAL_GetTick());
+                printf("Received led_queue value: [%d]    at [%d] tick\r\n",
+                                                                  led_value, 
+                                                             HAL_GetTick());
                 
                 /* Execute LED operation */
                 led_ret = led_on_off(led_value);
                 if ( LED_OK == led_ret )
                 {
-                    printf("LED operation success! at time [%d]\r\n", 
-                                                      HAL_GetTick());
+                    printf("LED operation success            at [%d] tick\r\n", 
+                                                                HAL_GetTick());
                 }
             }
         }

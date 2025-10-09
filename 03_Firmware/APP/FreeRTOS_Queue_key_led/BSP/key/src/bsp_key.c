@@ -34,9 +34,9 @@ QueueHandle_t key_queue;
 
 /* Key task attributes */
 const osThreadAttr_t key_Task_attributes = {
-    .name = "key_Task",                         /* Task name */
-    .stack_size = 128 * 4,                      /* Stack: 512 bytes */
-    .priority = (osPriority_t) osPriorityHigh,  /* Priority: High */
+    .name = "key_Task",                         /* Task name                 */
+    .stack_size = 128 * 4,                      /* Stack: 512 bytes          */
+    .priority = (osPriority_t) osPriorityHigh, /* Priority: High            */
 };
 
 /**
@@ -55,15 +55,15 @@ key_status_t key_scan(key_press_status_t *key_value)
     /* Poll key state up to 1000 times */
     if ( GPIO_PIN_RESET == HAL_GPIO_ReadPin(key_GPIO_Port, key_Pin) )
     {
-        current_key_value = KEY_PRESSED;    /* Set key state to pressed */
-        *key_value = current_key_value;     /* Return key state */
-        return KEY_OK;                      /* Return success */
+        current_key_value = KEY_PRESSED;    /* Set key state to pressed      */
+        *key_value = current_key_value;     /* Return key state              */
+        return KEY_OK;                      /* Return success                */
     }
     
     /* Timeout without detecting key press */
-    *key_value = current_key_value;     /* Return not pressed state */
+    *key_value = current_key_value;         /* Return not pressed state      */
 
-    return KEY_ERRORTIMEOUT;            /* Return timeout error */
+    return KEY_ERRORTIMEOUT;                /* Return timeout error          */
 }
 
 /**
@@ -78,10 +78,10 @@ key_status_t key_scan(key_press_status_t *key_value)
 void key_task_func(void *argument)
 {
     /* USER CODE BEGIN key_task_func */
-    key_status_t       key_ret   =          KEY_OK;         /* Key scan return status */
-    key_press_status_t key_value = KEY_NOT_PRESSED;         /* Current key state */
+    key_status_t       key_ret   =          KEY_OK;/* Key scan return status */
+    key_press_status_t key_value = KEY_NOT_PRESSED;/* Current key state      */
 
-    uint32_t counter_tick = 0;  /* Counter for recording key press count */
+    uint32_t counter_tick = 0;  /* Counter for recording key press count     */
     
     /* Create key message queue, queue length 10, each element size uint32_t */
     key_queue = xQueueCreate ( 10, sizeof(uint32_t) );
@@ -135,7 +135,8 @@ void key_task_func(void *argument)
 /**
  * @brief Key scanning function
  * 
- * This function detects whether the key is pressed by reading the GPIO pin state.
+ * This function detects whether the key is pressed by reading the GPIO pin 
+ * state.
  * It uses polling method with a maximum of 1000 attempts.
  * 
  * Execution steps:
@@ -143,7 +144,8 @@ void key_task_func(void *argument)
  *  2. If key press is detected (GPIO is low level), return success
  *  3. If timeout occurs without detecting key press, return timeout error
  *  
- * @param[out] key_value : Pointer to key state, returns whether key is pressed
+ * @param[out] key_value : Pointer to key state, returns whether key is 
+ *                         pressed
  *                         - KEY_PRESSED: Key is pressed
  *                         - KEY_NOT_PRESSED: Key is not pressed
  * 
