@@ -8,6 +8,7 @@
         "stm32f4xx_hal.h": "c",
         "freertos.h": "c",
         "cmsis_os.h": "c",
-        "task.h": "c"
+        "task.h": "c",
+        "bsp_key_irq.h": "c"
     }
 }

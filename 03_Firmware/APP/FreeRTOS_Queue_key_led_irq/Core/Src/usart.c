@@ -124,9 +124,9 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
  ******************************************************************/
 PUTCHAR_PROTOTYPE
 {
-    vTaskSuspendAll(); // Enter critical section
+    // vTaskSuspendAll(); // Enter critical section
     HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xFFFF);
-    xTaskResumeAll();  // Exit critical section
+    // xTaskResumeAll();  // Exit critical section
     return ch;
 }
 /* USER CODE END 1 */
