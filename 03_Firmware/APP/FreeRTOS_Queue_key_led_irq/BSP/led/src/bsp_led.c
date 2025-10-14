@@ -25,8 +25,13 @@
 #include "bsp_led.h"
 
 //*************************** Defines *******************************//
+//********************* Global_Var **********************//
 
-//********************* Thread_Func ***********************//
+static uint32_t g_blink_times = 0;
+static uint32_t g_blink_order = 0;
+//********************* Global_Var **********************//
+
+//******************** Thread_Func **********************//
 /* LED task handle */
 osThreadId_t led_TaskHandle;
 
@@ -88,6 +93,37 @@ led_status_t led_on_off(led_operation_t led_operation)
     return led_status;
 }
 
+//********************* Queue_Handler *********************//
+/**
+ * @brief LED control function
+ * 
+ * @param[in] led_operation : LED operation type
+ *                            - LED_ON: Turn on LED
+ *                            - LED_OFF: Turn off LED
+ *                            - LED_TOGGLE: Toggle LED state
+ * 
+ * @return led_status_t : Operation status (LED_OK on success)
+ * 
+ * @note LED uses active-low logic
+ */
+led_status_t led_on_off_timer_irq(led_operation_t led_operation)
+{
+    led_status_t led_status = LED_OK;
+    
+    if ( LED_BLINK_1_TIMES  == led_operation )
+    {
+        g_blink_times =  1;
+        g_blink_order =  0;
+    }
+
+    if ( LED_BLINK_10_TIMES == led_operation )
+    {
+        g_blink_times = 10;
+        g_blink_order =  0;
+    }
+    return led_status;
+}
+
 /**
  * @brief LED task function
  * 
@@ -125,12 +161,12 @@ void led_task_func(void *argument)
             /* Receive command from queue, timeout: 10 ticks */
             if ( pdTRUE == xQueueReceive(led_queue, &led_value, 10) )
             {
-                printf("Received led_queue value: [%d]    at [%d] tick\r\n",
-                                                                  led_value, 
-                                                             HAL_GetTick());
+                printf("Received led_queue value: [%d]       at [%d] tick\r\n",
+                                                                     led_value, 
+                                                                HAL_GetTick());
                 
                 /* Execute LED operation */
-                led_ret = led_on_off(led_value);
+                led_ret = led_on_off_timer_irq(led_value);
                 if ( LED_OK == led_ret )
                 {
                     printf("LED operation success            at [%d] tick\r\n", 
@@ -143,5 +179,38 @@ void led_task_func(void *argument)
     }
 }
 /* USER CODE END led_task_func */
+
+/**
+ * @brief led_callback_in_timer2 for timer to run
+ * 
+ * @param[in] argument : Task parameter (unused)
+ * 
+ * @return void
+ * 
+ * @note Priority: Normal, Stack: 512 bytes, Period: 1ms
+ */
+led_status_t led_callback_in_timer2(void)
+{
+    // 1. if the g_blink_times is not zero, then start blink
+    if ( g_blink_times > 0 )
+    {
+        if ( g_blink_order % 2 == 0)
+        {
+            led_on_off(LED_ON);
+        }
+        else
+        {
+            led_on_off(LED_OFF);
+            g_blink_times--;
+        }
+        g_blink_order++;
+    }
+    else
+    {
+        g_blink_order = 0;
+    }
+
+    return LED_OK;
+}
 
 //*************************** Defines *******************************//

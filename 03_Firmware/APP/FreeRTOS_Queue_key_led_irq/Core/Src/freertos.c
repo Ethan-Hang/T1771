@@ -237,15 +237,24 @@ void StartDefaultTask(void *argument)
     for (;;)
     {
         printf("APP task is living\r\n");
+
+        // Check if the queue was created successfully
+        if ( NULL == key_queue )
+        {
+            printf("key_queue is not created!               at"
+                                               "[%d] tick \r\n", 
+                                                HAL_GetTick());
+        }
+
         // 1. If the key is pressed with short time
-        if ( pdTRUE == xQueueReceive(                     key_queue, 
-                                               &( key_press_event ), 
-                                                ( TickType_t ) 0 ) )
+        if ( pdTRUE == xQueueReceive(                         key_queue, 
+                                                   &( key_press_event ), 
+                                                    ( TickType_t ) 0 ) )
         {
             if ( KEY_SHORT_PRESSED == key_press_event )
             {
                 // 1.1 toggle the LED
-                led_operation = LED_TOGGLE;
+                led_operation = LED_BLINK_1_TIMES;
                 if ( pdTRUE == xQueueSendToBack(              led_queue, 
                                                          &led_operation, 
                                                     ( TickType_t ) 0 ) )
@@ -259,7 +268,7 @@ void StartDefaultTask(void *argument)
             if ( KEY_LONG_PRESSED  == key_press_event )
             {
                 // 2.1 led blink with 3 times
-                led_operation = LED_BLINK_3_TIMES;
+                led_operation =  LED_BLINK_10_TIMES;
                 if ( pdTRUE == xQueueSendToBack(              led_queue, 
                                                          &led_operation, 
                                                     ( TickType_t ) 0 ) )

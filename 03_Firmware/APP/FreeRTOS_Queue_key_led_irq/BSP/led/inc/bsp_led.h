@@ -77,7 +77,9 @@ typedef enum
     LED_ON                = 0,           /* Turn on LED          */
     LED_OFF               = 1,           /* Turn off LED         */
     LED_TOGGLE            = 2,           /* Toggle LED           */
-    LED_BLINK_3_TIMES     = 3,           /* Blink LED 3 times    */
+    LED_BLINK_1_TIMES     = 3,           /* Blink LED 1 time     */
+    LED_BLINK_3_TIMES     = 4,           /* Blink LED 3 times    */
+    LED_BLINK_10_TIMES    = 5,           /* Blink LED 10 times   */
     LED_INITED_VALUE      = 0xFF         /* Initial value        */
 } led_operation_t;
 //******************************** Defines **********************************//
@@ -105,6 +107,17 @@ led_status_t led_on_off(led_operation_t led_operation);
  * @note Priority: Normal, Stack: 512 bytes, Period: 1ms
  */
 void led_task_func(void *argument);
+
+/**
+ * @brief led_callback_in_timer2 for timer to run
+ * 
+ * @param[in] argument : Task parameter (unused)
+ * 
+ * @return void
+ * 
+ * @note Priority: Normal, Stack: 512 bytes, Period: 1ms
+ */
+extern led_status_t led_callback_in_timer2(void);
 
 //******************************** Declaring ********************************//
 
