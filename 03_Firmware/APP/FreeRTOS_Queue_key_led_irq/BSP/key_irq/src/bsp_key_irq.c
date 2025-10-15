@@ -84,20 +84,21 @@ key_status_t key_scan(key_press_status_t *key_value)
 void key_task_func(void *argument)
 {
     /**                     Variables (in task stack)                       **/
-    uint32_t               event_index =                                     0;
-    uint32_t        first_trigger_tick =                                     0;
-    uint32_t          short_press_time =                      SHORT_PRESS_TIME;
-    key_press_event_t  key_press_event =                  
+    uint32_t               event_index   =                                     0;
+    uint32_t        first_trigger_tick   =                                     0;
+    uint32_t          short_press_time   =                      SHORT_PRESS_TIME;
+    key_press_event_t  key_press_event   =                  
     {
         .edge_type = RISING,
         .trigger_tick = 0
     };
+    key_press_event_t *p_key_press_event =                                  NULL;
     /**                     Variables (in task stack)                       **/
 
     
     /**                      Variables (in OS heap)                         **/
-    key_queue       =  xQueueCreate ( 10, sizeof( key_press_status_t ) );
-    inter_key_queue =  xQueueCreate ( 10, sizeof( key_press_event_t  ) );
+    key_queue       =  xQueueCreate ( 10, sizeof( key_press_status_t  ) );
+    inter_key_queue =  xQueueCreate ( 10, sizeof( key_press_event_t*  ) );
 
     /**                      Variables (in OS heap)                         **/
 
@@ -123,9 +124,19 @@ void key_task_func(void *argument)
 
         // 1. check if there is new data about key press in the queue
         if ( pdTRUE == xQueueReceive(       inter_key_queue, 
-                                       &( key_press_event ), 
+                                     &( p_key_press_event ), 
                                         ( TickType_t ) 0 ) )
         {
+            if ( NULL == p_key_press_event )
+            {
+                printf("p_key_press_event is NULL!      at"
+                                           "[%d] tick \r\n", 
+                                             HAL_GetTick());
+                continue;
+            }
+
+            key_press_event.trigger_tick = p_key_press_event->trigger_tick;
+            key_press_event.edge_type    =    p_key_press_event->edge_type;
             printf("key_press_event.trigger_tick          "
                                                  "[%d]\r\n",
                               key_press_event.trigger_tick);
@@ -312,8 +323,25 @@ key_status_t key_scan_short_long_press(key_press_status_t       *key_value,
  */
 KEY_CALLBACK
 {
+    HAL_GPIO_WritePin(IRQ_TRACE_GPIO_Port, IRQ_TRACE_Pin, GPIO_PIN_SET);
+    
     static uint8_t irq_type = FALLING_TYPE;
-    /* 
+
+    static key_press_event_t key_press_event_1 =                 
+    {
+        .edge_type = FALLING,
+        .trigger_tick = 0
+    };
+    static key_press_event_t key_press_event_2 =                 
+    {
+        .edge_type = RISING,
+        .trigger_tick = 0
+    };
+
+    key_press_event_t *p_key_press_event_1 = &key_press_event_1;
+    key_press_event_t *p_key_press_event_2 = &key_press_event_2;
+
+    /*
     *  1. if trigger first with falling type, \
     *     send the event to the inter_key_queue \
     *     changing the interruption type to rising
@@ -322,18 +350,21 @@ KEY_CALLBACK
 
     if ( FALLING_TYPE == irq_type )
     {
-        key_press_event_t key_press_event =                 
+        if ( NULL == inter_key_queue )
         {
-            .edge_type = FALLING,
-            .trigger_tick = HAL_GetTick()
-        };
-        if (pdTRUE == xQueueSendToBackFromISR(            inter_key_queue,
-                                                         &key_press_event, 
-                                                &xHigherPrioritTaskWoken))
+            printf("inter_key_queue is not created!     at"
+                                           "[%d] tick \r\n", 
+                                             HAL_GetTick());
+        }
+
+        key_press_event_1.trigger_tick = HAL_GetTick();
+        if ( pdTRUE == xQueueSendToBackFromISR(            inter_key_queue,
+                                                      &p_key_press_event_1,
+                                                 &xHigherPrioritTaskWoken))
         {
             printf("key_press_event send falling in irq at" 
-                    "[%d] tick\r\n",
-                     HAL_GetTick());
+                                            "[%d] tick\r\n",
+                                             HAL_GetTick());
         }
         /* 
         *  1.1 change the irq_type to rising
@@ -356,18 +387,21 @@ KEY_CALLBACK
     */
     else if ( RISING_TYPE == irq_type )
     {
-        key_press_event_t key_press_event_2 =                 
+        if ( NULL == inter_key_queue )
         {
-            .edge_type = RISING,
-            .trigger_tick = HAL_GetTick()
-        };
+            printf("inter_key_queue is not created!     at"
+                                           "[%d] tick \r\n", 
+                                             HAL_GetTick());
+        }
+
+        key_press_event_2.trigger_tick = HAL_GetTick();
         if (pdTRUE == xQueueSendToBackFromISR(            inter_key_queue,
-                                                       &key_press_event_2,
+                                                     &p_key_press_event_2,
                                                 &xHigherPrioritTaskWoken))
         {
             printf("key_press_event send rising in irq  at"
-                    "[%d] tick\r\n",
-                     HAL_GetTick());
+                                            "[%d] tick\r\n",
+                                             HAL_GetTick());
         }
         /* 
         *  2.1 change the irq_type to falling
@@ -382,7 +416,10 @@ KEY_CALLBACK
         GPIO_InitStruct.Mode             = GPIO_MODE_IT_FALLING;
         GPIO_InitStruct.Pull             =          GPIO_PULLUP;
         HAL_GPIO_Init(KEY_GPIO_Port, &GPIO_InitStruct);  
-    }    
+    }
+
+    HAL_GPIO_WritePin(IRQ_TRACE_GPIO_Port, IRQ_TRACE_Pin, GPIO_PIN_RESET);
+
 }
 
 //******************************** Defines **********************************//
