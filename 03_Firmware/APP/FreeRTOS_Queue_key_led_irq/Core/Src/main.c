@@ -26,6 +26,10 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include "FreeRTOS.h"
+#include "SEGGER_RTT.h"
+#include "elog.h"
+#include "task.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,6 +62,13 @@ void MX_FREERTOS_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+void app_elog_init(void)
+{
+  elog_init();
+  
+  elog_start();
+}
 
 /* USER CODE END 0 */
 
@@ -93,6 +104,7 @@ int main(void)
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT(&htim2);
+  app_elog_init();
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -160,7 +172,25 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+#ifdef __GNUC__
+#define PUTCHAR_PROTOTYPE int _io_putchar(int ch)
+#else
+#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+#endif /* __GNUC__*/
 
+/******************************************************************
+ *@brief  Retargets the C library printf  function to the USART.
+ *@param  None
+ *@retval None
+ ******************************************************************/
+PUTCHAR_PROTOTYPE
+{
+    // vTaskSuspendAll(); // Enter critical section
+    // HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xFFFF);
+    SEGGER_RTT_PutChar(0, ch);
+    // xTaskResumeAll();  // Exit critical section
+    return ch;
+}
 /* USER CODE END 4 */
 
 /**

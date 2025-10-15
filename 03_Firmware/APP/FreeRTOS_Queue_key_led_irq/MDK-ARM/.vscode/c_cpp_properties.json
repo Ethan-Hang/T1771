@@ -17,11 +17,15 @@
                 "g:\\STM32\\LIXIN\\03_Firmware\\APP\\FreeRTOS_Queue_key_led_irq\\BSP\\led\\src",
                 "g:\\STM32\\LIXIN\\03_Firmware\\APP\\FreeRTOS_Queue_key_led_irq\\BSP\\key_irq\\inc",
                 "g:\\STM32\\LIXIN\\03_Firmware\\APP\\FreeRTOS_Queue_key_led_irq\\BSP\\key_irq\\src",
+                "g:\\STM32\\LIXIN\\03_Firmware\\APP\\FreeRTOS_Queue_key_led_irq\\Middlewares\\RTT",
+                "g:\\STM32\\LIXIN\\03_Firmware\\APP\\FreeRTOS_Queue_key_led_irq\\Middlewares\\EasyLogger\\inc",
                 "g:\\STM32\\LIXIN\\03_Firmware\\APP\\FreeRTOS_Queue_key_led_irq\\MDK-ARM",
                 "g:\\STM32\\LIXIN\\03_Firmware\\APP\\FreeRTOS_Queue_key_led_irq\\Core\\Src",
                 "g:\\STM32\\LIXIN\\03_Firmware\\APP\\FreeRTOS_Queue_key_led_irq\\Drivers\\STM32F4xx_HAL_Driver\\Src",
                 "g:\\STM32\\LIXIN\\03_Firmware\\APP\\FreeRTOS_Queue_key_led_irq\\Middlewares\\Third_Party\\FreeRTOS\\Source",
-                "g:\\STM32\\LIXIN\\03_Firmware\\APP\\FreeRTOS_Queue_key_led_irq\\Middlewares\\Third_Party\\FreeRTOS\\Source\\portable\\MemMang"
+                "g:\\STM32\\LIXIN\\03_Firmware\\APP\\FreeRTOS_Queue_key_led_irq\\Middlewares\\Third_Party\\FreeRTOS\\Source\\portable\\MemMang",
+                "g:\\STM32\\LIXIN\\03_Firmware\\APP\\FreeRTOS_Queue_key_led_irq\\Middlewares\\EasyLogger\\src",
+                "g:\\STM32\\LIXIN\\03_Firmware\\APP\\FreeRTOS_Queue_key_led_irq\\Middlewares\\EasyLogger\\port"
             ],
             "defines": [
                 "USE_HAL_DRIVER",
