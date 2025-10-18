@@ -25,22 +25,26 @@
  * Function: Portable interface for each platform.
  * Created on: 2015-04-28
  */
- 
+
 #include <elog.h>
 #include <stdio.h>
 #include "SEGGER_RTT.h"
-
+#include "main.h"
+#include "cmsis_os.h"
+#include "tim.h"
+#include <stdio.h>
 /**
  * EasyLogger port initialize
  *
  * @return result
  */
-ElogErrCode elog_port_init(void) {
+ElogErrCode elog_port_init(void)
+{
     ElogErrCode result = ELOG_NO_ERR;
 
     /* add your code here */
     SEGGER_RTT_Init();
-    
+
     return result;
 }
 
@@ -48,10 +52,10 @@ ElogErrCode elog_port_init(void) {
  * EasyLogger port deinitialize
  *
  */
-void elog_port_deinit(void) {
+void elog_port_deinit(void)
+{
 
     /* add your code here */
-
 }
 
 /**
@@ -60,8 +64,9 @@ void elog_port_deinit(void) {
  * @param log output of log
  * @param size log size
  */
-void elog_port_output(const char *log, size_t size) {
-    
+void elog_port_output(const char *log, size_t size)
+{
+
     /* add your code here */
     SEGGER_RTT_Write(0, log, size);
     // printf("%.*s", size, log);
@@ -70,19 +75,19 @@ void elog_port_output(const char *log, size_t size) {
 /**
  * output lock
  */
-void elog_port_output_lock(void) {
-    
+void elog_port_output_lock(void)
+{
+
     /* add your code here */
-    
 }
 
 /**
  * output unlock
  */
-void elog_port_output_unlock(void) {
-    
+void elog_port_output_unlock(void)
+{
+
     /* add your code here */
-    
 }
 
 /**
@@ -90,10 +95,13 @@ void elog_port_output_unlock(void) {
  *
  * @return current time
  */
-const char *elog_port_get_time(void) {
-    
+const char *elog_port_get_time(void)
+{
+    uint32_t tick = HAL_GetTick();
+    static char time_str[16];
+    snprintf(time_str, sizeof(time_str), "%08u", tick);
+    return time_str;
     /* add your code here */
-    
 }
 
 /**
@@ -101,10 +109,10 @@ const char *elog_port_get_time(void) {
  *
  * @return current process name
  */
-const char *elog_port_get_p_info(void) {
-    
+const char *elog_port_get_p_info(void)
+{
+
     /* add your code here */
-    
 }
 
 /**
@@ -112,8 +120,8 @@ const char *elog_port_get_p_info(void) {
  *
  * @return current thread name
  */
-const char *elog_port_get_t_info(void) {
-    
+const char *elog_port_get_t_info(void)
+{
+
     /* add your code here */
-    
 }

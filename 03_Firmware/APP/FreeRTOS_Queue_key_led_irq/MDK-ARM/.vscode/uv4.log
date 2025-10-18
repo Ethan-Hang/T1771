@@ -37,7 +37,7 @@ Target info:
 ------------
 Device: STM32F411CEUx
 VTarget = 3.290V
-State of Pins: TCK: 0, TDI: 1, TDO: 0, TMS: 1, TRES: 1, TRST: 1
+State of Pins: TCK: 0, TDI: 0, TDO: 0, TMS: 1, TRES: 1, TRST: 1
 Hardware-Breakpoints: 6
 Software-Breakpoints: 8192
 Watchpoints:          4
@@ -46,4 +46,4 @@ JTAG speed: 4000 kHz
 Erase Done.Programming Done.Verify OK.* JLink Info: Reset: Halt core after reset via DEMCR.VC_CORERESET.
 * JLink Info: Reset: Reset device via AIRCR.SYSRESETREQ.
 Application running ...
-Flash Load finished at 23:49:42
+Flash Load finished at 21:44:57

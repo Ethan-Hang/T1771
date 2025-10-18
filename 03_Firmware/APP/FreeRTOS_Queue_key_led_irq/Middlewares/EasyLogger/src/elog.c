@@ -92,7 +92,8 @@
 #define S_BOLD                         "1m"
 #define S_UNDERLINE                    "4m"
 #define S_BLINK                        "5m"
-#define S_NORMAL                       "22m"
+// #define S_NORMAL                       "22m"
+#define S_NORMAL                       "1m"
 /* output log default color definition: [front color] + [background color] + [show style] */
 #ifndef ELOG_COLOR_ASSERT
 #define ELOG_COLOR_ASSERT              (F_MAGENTA B_NULL S_NORMAL)
