@@ -97,11 +97,22 @@ void elog_port_output_unlock(void)
  */
 const char *elog_port_get_time(void)
 {
-    uint32_t tick = HAL_GetTick();
-    static char time_str[16];
-    snprintf(time_str, sizeof(time_str), "%08u", tick);
-    return time_str;
     /* add your code here */
+    static char cur_system_time[16] = {0};
+
+    #if (INCLUDE_xTaskGetSchedulerState == 1)
+    if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED) 
+    {
+    #endif
+        TickType_t tick = xTaskGetTickCount();
+        snprintf(cur_system_time, sizeof(cur_system_time), "%lu.%03lu",
+                 tick / configTICK_RATE_HZ,
+                 (tick % configTICK_RATE_HZ) * 1000 / configTICK_RATE_HZ);
+        return cur_system_time;
+    #if (INCLUDE_xTaskGetSchedulerState == 1)
+    }
+    #endif
+    return "";
 }
 
 /**

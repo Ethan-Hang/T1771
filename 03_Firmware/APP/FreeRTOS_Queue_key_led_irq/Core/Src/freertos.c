@@ -29,6 +29,8 @@
 #include "bsp_key_irq.h"
 #include "bsp_led.h"
 #include "queue.h"
+#include "elog.h"
+#include "SEGGER_RTT.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -236,6 +238,10 @@ void StartDefaultTask(void *argument)
     /* Infinite loop */
     for (;;)
     {
+#if 1 // Test #4 Elog in APP task
+#define TAG "APP_TASK"
+        elog_a(TAG, "Elog running in APP task...\r\n");
+#endif
         printf("APP task is living\r\n");
 
         // Check if the queue was created successfully

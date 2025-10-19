@@ -66,7 +66,7 @@ void MX_FREERTOS_Init(void);
 void app_elog_init(void)
 {
   elog_init();
-  elog_set_fmt(ELOG_LVL_ASSERT, ELOG_FMT_ALL);
+  elog_set_fmt(ELOG_LVL_ASSERT, ELOG_FMT_LVL | ELOG_FMT_TAG | ELOG_FMT_TIME);
   elog_start();
 }
 
@@ -108,18 +108,16 @@ int main(void)
   /* USER CODE END 2 */
 
   /* Init scheduler */
-//   osKernelInitialize();  /* Call init function for freertos objects (in freertos.c) */
-//   MX_FREERTOS_Init();
+  osKernelInitialize();  /* Call init function for freertos objects (in freertos.c) */
+  MX_FREERTOS_Init();
 
   /* Start scheduler */
-//   osKernelStart();
+  osKernelStart();
   /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    elog_a(TAG, "Elog running in main loop...\r\n");
-    HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
