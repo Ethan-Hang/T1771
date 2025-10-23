@@ -1,5 +1,8 @@
 {
     "files.associations": {
-        "gpio.h": "c"
+        "gpio.h": "c",
+        "main.h": "c",
+        "cmsis_os.h": "c",
+        "queue.h": "c"
     }
 }

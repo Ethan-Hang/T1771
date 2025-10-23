@@ -26,6 +26,9 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "queue.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -35,7 +38,14 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define BUFFER_SIZE         1
+#define DMA_ADC_CPLT_INT 0xA1
+#define BUFFER1_READY    0x01
+#define BUFFER2_READY    0x02
+uint32_t *buffer1 = NULL;
+uint32_t *buffer2 = NULL;
 
+uint32_t DMA_Point = 0;
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -45,7 +55,10 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-
+extern ADC_HandleTypeDef hadc1;
+extern DMA_HandleTypeDef hdma_adc1;
+QueueHandle_t xQueue1;
+QueueHandle_t xQueue2;
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
@@ -57,22 +70,13 @@ const osThreadAttr_t defaultTask_attributes = {
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
-osThreadId_t defaultTaskHandle_2;
-const osThreadAttr_t defaultTask_attributes_2 = {
-    .name = "defaultTask_2",
+osThreadId_t adc_output_TaskHandle;
+const osThreadAttr_t adc_output_attributes = {
+    .name = "adc_outputTask",
     .stack_size = 128 * 4,
     .priority = (osPriority_t)osPriorityNormal,
 };
-
-osThreadId_t defaultTaskHandle_3;
-const osThreadAttr_t defaultTask_attributes_3 = {
-    .name = "defaultTask_3",
-    .stack_size = 128 * 4,
-    .priority = (osPriority_t)osPriorityNormal,
-};
-
-void StartDefaultTask_2(void *argument);
-void StartDefaultTask_3(void *argument);
+void adc_output_Task(void *argument);
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
@@ -108,17 +112,9 @@ void MX_FREERTOS_Init(void)
 
     /* Create the thread(s) */
     /* creation of defaultTask */
-    defaultTaskHandle   = osThreadNew(StartDefaultTask,
-                                      NULL,
-                                      &defaultTask_attributes);
-
+    defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
+    defaultTaskHandle = osThreadNew(adc_output_Task, NULL, &adc_output_attributes);
     /* USER CODE BEGIN RTOS_THREADS */
-    defaultTaskHandle_2 = osThreadNew(StartDefaultTask_2,
-                                      NULL,
-                                      &defaultTask_attributes_2);
-    defaultTaskHandle_3 = osThreadNew(StartDefaultTask_3,
-                                      NULL,
-                                      &defaultTask_attributes_3);
     /* add threads, ... */
     /* USER CODE END RTOS_THREADS */
 
@@ -138,53 +134,153 @@ void StartDefaultTask(void *argument)
 {
     /* USER CODE BEGIN StartDefaultTask */
     /* Infinite loop */
+    buffer1 = (uint32_t *)malloc(BUFFER_SIZE * sizeof(uint32_t));
+    buffer2 = (uint32_t *)malloc(BUFFER_SIZE * sizeof(uint32_t));
+    if (NULL == buffer1)
+    {
+        printf("Failed to Create buffer1\r\n");
+        return;
+    }
+    if (NULL == buffer2)
+    {
+        printf("Failed to Create buffer2\r\n");
+        return;
+    }
+    memset(buffer1, 0xFF, sizeof(uint32_t) * BUFFER_SIZE);
+    memset(buffer2, 0xFF, sizeof(uint32_t) * BUFFER_SIZE);
+
+    xQueue1 = xQueueCreate(10, sizeof(uint32_t));
+    if (NULL == xQueue1)
+    {
+        printf("xQueueCreate1 failed\r\n");
+        return;
+    }
+    xQueue2 = xQueueCreate(10, sizeof(uint32_t));
+    if (NULL == xQueue2)
+    {
+        printf("xQueueCreate2 failed\r\n");
+        return;
+    }
+    
+    if (HAL_OK == HAL_ADC_Start_DMA(&hadc1, buffer1, BUFFER_SIZE))
+    {
+        printf("HAL_ADC_Start_DMA success\r\n");
+    }
+    else
+    {
+        printf("HAL_ADC_Start_DMA error\r\n");
+        return;
+    }
+
+    uint32_t queue_data2 = 0xff;
+    uint32_t queue2_pattern = BUFFER1_READY;
+
     for (;;)
     {
-        for (int i = 0; i < 720; i++)
+        if (pdPASS == xQueueReceive(xQueue1, &(queue_data2), portMAX_DELAY))
         {
-            printf("This is task1\r\n");
-            osDelay(10);            
+            printf("xQueueReceive success, data: [%lu]\r\n", queue_data2);
         }
-        vTaskSuspend(defaultTaskHandle);
+
+        if (0 == DMA_Point)
+        {
+            printf("buffer1 data = [%lu]\r\n", buffer1[0]);
+
+            queue2_pattern = BUFFER1_READY;
+            if (pdPASS == xQueueSendToBack(xQueue2, &queue2_pattern, portMAX_DELAY))
+            {
+                printf("xQueueSend buffer1 to Queue2 success\r\n");
+            }
+
+            if (HAL_OK != HAL_ADC_Start_DMA(&hadc1, buffer2, BUFFER_SIZE))
+            {
+                printf("HAL_ADC_Start_DMA error\r\n");
+                return;
+            }
+
+            DMA_Point = 1;
+        }
+        else if (1 == DMA_Point)
+        {
+            printf("buffer2 data = [%lu]\r\n", buffer2[0]);
+
+            queue2_pattern = BUFFER2_READY;
+            if (pdPASS == xQueueSendToBack(xQueue2, &queue2_pattern, portMAX_DELAY))
+            {
+                printf("xQueueSend buffer2 to Queue2 success\r\n");
+            }
+
+            if (HAL_OK != HAL_ADC_Start_DMA(&hadc1, buffer1, BUFFER_SIZE))
+            {
+                printf("HAL_ADC_Start_DMA error\r\n");
+                return;
+            }
+
+            DMA_Point = 0;
+        }
+        osDelay(100);
     }
     /* USER CODE END StartDefaultTask */
 }
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
-/**
- * @brief  Function implementing the defaultTaskHandle_2 thread.
- * @param  argument: Not used
- * @retval None
- */
-/* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask_2(void *argument)
+void adc_output_Task(void *argument)
 {
-    /* USER CODE BEGIN StartDefaultTask */
-    /* Infinite loop */
+    /* USER CODE BEGIN adc_output_Task */
+    printf("adc_out_put thread \r\n");
+
+    uint32_t queue2_receive = BUFFER1_READY;
     for (;;)
     {
-        printf("This is task2\r\n");
-        osDelay(10);
+        xQueueReceive(xQueue2, &queue2_receive, portMAX_DELAY);
+        if (queue2_receive == BUFFER1_READY)
+        {
+            printf("ADC Output Task: Buffer1 is ready, data = [%lu]\r\n", buffer1[0]);
+        }
+        else if (queue2_receive == BUFFER2_READY)
+        {
+            printf("ADC Output Task: Buffer2 is ready, data = [%lu]\r\n", buffer2[0]);
+        }
+        osDelay(100);
     }
-    /* USER CODE END StartDefaultTask */
+    /* USER CODE END adc_output_Task */
 }
 
-/**
- * @brief  Function implementing the defaultTaskHandle_3 thread.
- * @param  argument: Not used
- * @retval None
- */
-/* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask_3(void *argument)
+
+
+
+
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
 {
-    /* USER CODE BEGIN StartDefaultTask */
-    /* Infinite loop */
-    for (;;)
+    /* Prevent unused argument(s) compilation warning */
+    UNUSED(hadc);
+    /* NOTE : This function Should not be modified, when the callback is needed,
+              the HAL_ADC_ConvCpltCallback could be implemented in the user file
+     */
+    printf("Buffer1: [%lu]\r\n", buffer1[0]);
+
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+
+    uint32_t dma_adc_pattern_cplt = DMA_ADC_CPLT_INT;
+
+    if (pdPASS == xQueueSendToBackFromISR(xQueue1, &dma_adc_pattern_cplt, &xHigherPriorityTaskWoken))
     {
-        printf("This is task3\r\n");
-        osDelay(10);
+        printf("xQueueSend in irq success\r\n");
     }
-    /* USER CODE END StartDefaultTask */
+    else
+    {
+        printf("xQueueSend in irq failed\r\n");
+    }
+}
+
+void HAL_ADC_ErrorCallback(ADC_HandleTypeDef *hadc)
+{
+    /* Prevent unused argument(s) compilation warning */
+    UNUSED(hadc);
+    /* NOTE : This function Should not be modified, when the callback is needed,
+              the HAL_ADC_ErrorCallback could be implemented in the user file
+     */
+    printf("ADC transfer error!\r\n");
 }
 /* USER CODE END Application */
