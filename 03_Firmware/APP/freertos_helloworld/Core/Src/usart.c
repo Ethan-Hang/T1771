@@ -25,24 +25,6 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
-#ifdef __GNUC__
-#define PUTCHAR_PROTOTYPE int _io_putchar(int ch)
-#else
-#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
-#endif /* __GNUC__*/
-
-/******************************************************************
- *@brief  Retargets the C library printf function to the USART.
- *@param  None
- *@retval None
- ******************************************************************/
-PUTCHAR_PROTOTYPE
-{
-    // vTaskSuspendAll();
-    HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xFFFF);
-    // xTaskResumeAll();
-    return ch;
-}
 /* USER CODE END 0 */
 
 UART_HandleTypeDef huart1;

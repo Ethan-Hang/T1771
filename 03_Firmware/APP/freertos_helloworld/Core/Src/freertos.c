@@ -29,6 +29,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "queue.h"
+#include "elog.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -38,14 +40,13 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define BUFFER_SIZE         1
-#define DMA_ADC_CPLT_INT 0xA1
-#define BUFFER1_READY    0x01
-#define BUFFER2_READY    0x02
-uint32_t *buffer1 = NULL;
-uint32_t *buffer2 = NULL;
-
-uint32_t DMA_Point = 0;
+#define  BUFFER_SIZE                                      1
+#define  DMA_ADC_CPLT_INT                              0xA1
+#define  BUFFER1_READY                                 0x01
+#define  BUFFER2_READY                                 0x02
+uint32_t *gp_buffer1            =                     NULL;
+uint32_t *gp_buffer2            =                     NULL;
+uint32_t g_DMA_Point            =                        0;
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -134,37 +135,39 @@ void StartDefaultTask(void *argument)
 {
     /* USER CODE BEGIN StartDefaultTask */
     /* Infinite loop */
-    buffer1 = (uint32_t *)malloc(BUFFER_SIZE * sizeof(uint32_t));
-    buffer2 = (uint32_t *)malloc(BUFFER_SIZE * sizeof(uint32_t));
-    if (NULL == buffer1)
+    gp_buffer1 = (uint32_t *)malloc(BUFFER_SIZE * sizeof(uint32_t));
+    gp_buffer2 = (uint32_t *)malloc(BUFFER_SIZE * sizeof(uint32_t));
+    if (NULL == gp_buffer1)
     {
         printf("Failed to Create buffer1\r\n");
         return;
     }
-    if (NULL == buffer2)
+    if (NULL == gp_buffer2)
     {
         printf("Failed to Create buffer2\r\n");
         return;
     }
-    memset(buffer1, 0xFF, sizeof(uint32_t) * BUFFER_SIZE);
-    memset(buffer2, 0xFF, sizeof(uint32_t) * BUFFER_SIZE);
+    memset(gp_buffer1, 0xFF, sizeof(uint32_t) * BUFFER_SIZE);
+    memset(gp_buffer2, 0xFF, sizeof(uint32_t) * BUFFER_SIZE);
 
-    xQueue1 = xQueueCreate(10, sizeof(uint32_t));
+    xQueue1 = xQueueCreate(1, sizeof(uint32_t));
     if (NULL == xQueue1)
     {
         printf("xQueueCreate1 failed\r\n");
         return;
     }
-    xQueue2 = xQueueCreate(10, sizeof(uint32_t));
+    xQueue2 = xQueueCreate(1, sizeof(uint32_t));
     if (NULL == xQueue2)
     {
         printf("xQueueCreate2 failed\r\n");
         return;
     }
     
-    if (HAL_OK == HAL_ADC_Start_DMA(&hadc1, buffer1, BUFFER_SIZE))
+    if (HAL_OK == HAL_ADC_Start_DMA(                &hadc1, 
+                                                gp_buffer1,
+                                              BUFFER_SIZE))
     {
-        printf("HAL_ADC_Start_DMA success\r\n");
+        // printf("HAL_ADC_Start_DMA success\r\n");
     }
     else
     {
@@ -177,46 +180,56 @@ void StartDefaultTask(void *argument)
 
     for (;;)
     {
-        if (pdPASS == xQueueReceive(xQueue1, &(queue_data2), portMAX_DELAY))
+    if (pdPASS == xQueueReceive(                   xQueue1, 
+                                            &(queue_data2), 
+                                            portMAX_DELAY))
         {
-            printf("xQueueReceive success, data: [%lu]\r\n", queue_data2);
+            // printf("xQueueReceive success, data: [%lu]\r\n", queue_data2);
         }
 
-        if (0 == DMA_Point)
+        if (0 == g_DMA_Point)
         {
-            printf("buffer1 data = [%lu]\r\n", buffer1[0]);
+            printf("gp_buffer1 data = [%lu]\r\n", gp_buffer1[0]);
 
             queue2_pattern = BUFFER1_READY;
-            if (pdPASS == xQueueSendToBack(xQueue2, &queue2_pattern, portMAX_DELAY))
+            if (pdPASS == xQueueSendToBack(        xQueue2, 
+                                           &queue2_pattern, 
+                                            portMAX_DELAY))
             {
                 printf("xQueueSend buffer1 to Queue2 success\r\n");
             }
 
-            if (HAL_OK != HAL_ADC_Start_DMA(&hadc1, buffer2, BUFFER_SIZE))
+            if (HAL_OK != HAL_ADC_Start_DMA(        &hadc1, 
+                                                gp_buffer2, 
+                                              BUFFER_SIZE))
             {
                 printf("HAL_ADC_Start_DMA error\r\n");
                 return;
             }
 
-            DMA_Point = 1;
+            g_DMA_Point = 1;
         }
-        else if (1 == DMA_Point)
+        else if (1 == g_DMA_Point)
         {
-            printf("buffer2 data = [%lu]\r\n", buffer2[0]);
+            printf("gp_buffer2 data = [%lu]\r\n", gp_buffer2[0]);
 
             queue2_pattern = BUFFER2_READY;
-            if (pdPASS == xQueueSendToBack(xQueue2, &queue2_pattern, portMAX_DELAY))
+            if (pdPASS == xQueueSendToBack(         xQueue2, 
+                                            &queue2_pattern, 
+                                             portMAX_DELAY))
             {
-                printf("xQueueSend buffer2 to Queue2 success\r\n");
+                // printf("xQueueSend gp_buffer2 to Queue2 success\r\n");
             }
 
-            if (HAL_OK != HAL_ADC_Start_DMA(&hadc1, buffer1, BUFFER_SIZE))
+            if (HAL_OK != HAL_ADC_Start_DMA(        &hadc1, 
+                                                gp_buffer1, 
+                                              BUFFER_SIZE))
             {
                 printf("HAL_ADC_Start_DMA error\r\n");
                 return;
             }
 
-            DMA_Point = 0;
+            g_DMA_Point = 0;
         }
         osDelay(100);
     }
@@ -228,28 +241,41 @@ void StartDefaultTask(void *argument)
 void adc_output_Task(void *argument)
 {
     /* USER CODE BEGIN adc_output_Task */
+    
+    // wait for queue create
+    osDelay(10);
+
     printf("adc_out_put thread \r\n");
 
     uint32_t queue2_receive = BUFFER1_READY;
     for (;;)
     {
-        xQueueReceive(xQueue2, &queue2_receive, portMAX_DELAY);
+        if (pdPASS == xQueueReceive(               xQueue2, 
+                                           &queue2_receive, 
+                                            portMAX_DELAY))
+        {
+            printf("adc_output_Task QueueReceive success");
+        }
+
+        float voltage = 0.0f;
         if (queue2_receive == BUFFER1_READY)
         {
-            printf("ADC Output Task: Buffer1 is ready, data = [%lu]\r\n", buffer1[0]);
+            voltage =  (float)*gp_buffer1 * 3.3f / 4095.0f;
+            char str[30];
+            sprintf(str, "%.3f V\r\n", voltage);
+            elog_i("ADC buffer1 Voltage: ", str);
         }
         else if (queue2_receive == BUFFER2_READY)
         {
-            printf("ADC Output Task: Buffer2 is ready, data = [%lu]\r\n", buffer2[0]);
+            voltage =  (float)*gp_buffer2 * 3.3f / 4095.0f;
+            char str[30];
+            sprintf(str, " %.3f V\r\n", voltage);
+            elog_i("ADC buffer2 Voltage:", str);
         }
         osDelay(100);
     }
     /* USER CODE END adc_output_Task */
 }
-
-
-
-
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
 {
@@ -258,19 +284,22 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
     /* NOTE : This function Should not be modified, when the callback is needed,
               the HAL_ADC_ConvCpltCallback could be implemented in the user file
      */
-    printf("Buffer1: [%lu]\r\n", buffer1[0]);
+
+    // printf("Buffer1: [%lu]\r\n", gp_buffer1[0]);
 
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 
     uint32_t dma_adc_pattern_cplt = DMA_ADC_CPLT_INT;
 
-    if (pdPASS == xQueueSendToBackFromISR(xQueue1, &dma_adc_pattern_cplt, &xHigherPriorityTaskWoken))
+    if (pdPASS == xQueueSendToBackFromISR(         xQueue1,
+                                     &dma_adc_pattern_cplt, 
+                                &xHigherPriorityTaskWoken))
     {
-        printf("xQueueSend in irq success\r\n");
+        // printf("xQueueSend in irq success\r\n");
     }
     else
     {
-        printf("xQueueSend in irq failed\r\n");
+        // printf("xQueueSend in irq failed\r\n");
     }
 }
 
