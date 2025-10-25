@@ -5,6 +5,8 @@
         "cmsis_os.h": "c",
         "queue.h": "c",
         "usart.h": "c",
-        "segger_rtt.h": "c"
+        "segger_rtt.h": "c",
+        "string.h": "c",
+        "semphr.h": "c"
     }
 }

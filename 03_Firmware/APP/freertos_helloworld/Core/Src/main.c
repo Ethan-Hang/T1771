@@ -67,7 +67,10 @@ void MX_FREERTOS_Init(void);
 void app_elog_init(void)
 {
   elog_init();
+
   elog_set_fmt(ELOG_LVL_INFO, ELOG_FMT_LVL | ELOG_FMT_TAG);
+  elog_set_fmt(ELOG_LVL_WARN, ELOG_FMT_LVL);
+
   elog_start();
 }
 

@@ -30,6 +30,7 @@
 #include <string.h>
 #include "queue.h"
 #include "elog.h"
+#include "semphr.h"
 
 /* USER CODE END Includes */
 
@@ -60,6 +61,8 @@ extern ADC_HandleTypeDef                             hadc1;
 extern DMA_HandleTypeDef                         hdma_adc1;
 QueueHandle_t                                  g_xMailbox1;
 QueueHandle_t                                  g_xMailbox2;
+SemaphoreHandle_t                                 g_xMutex;
+SemaphoreHandle_t                         g_xDataProcessed;
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
@@ -97,6 +100,12 @@ void MX_FREERTOS_Init(void)
 
     /* USER CODE BEGIN RTOS_MUTEX */
     /* add mutexes, ... */
+    g_xMutex = xSemaphoreCreateMutex();
+    if (NULL == g_xMutex)
+    {
+        log_e("Failed to create mutex\r\n");
+        return;
+    }
     /* USER CODE END RTOS_MUTEX */
 
     /* USER CODE BEGIN RTOS_SEMAPHORES */
@@ -113,8 +122,12 @@ void MX_FREERTOS_Init(void)
 
     /* Create the thread(s) */
     /* creation of defaultTask */
-    defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
-    defaultTaskHandle = osThreadNew(adc_output_Task, NULL, &adc_output_attributes);
+    defaultTaskHandle = osThreadNew(      StartDefaultTask,
+                                                      NULL, 
+                                  &defaultTask_attributes);
+    defaultTaskHandle = osThreadNew(       adc_output_Task, 
+                                                      NULL, 
+                                   &adc_output_attributes);
     /* USER CODE BEGIN RTOS_THREADS */
     /* add threads, ... */
     /* USER CODE END RTOS_THREADS */
@@ -139,12 +152,12 @@ void StartDefaultTask(void *argument)
     gp_buffer2 = (uint32_t *)malloc(BUFFER_SIZE * sizeof(uint32_t));
     if (NULL == gp_buffer1)
     {
-        printf("Failed to Create buffer1\r\n");
+        log_e("Failed to Create buffer1\r\n");
         return;
     }
     if (NULL == gp_buffer2)
     {
-        printf("Failed to Create buffer2\r\n");
+        log_e("Failed to Create buffer2\r\n");
         return;
     }
     memset(gp_buffer1, 0xFF, sizeof(uint32_t) * BUFFER_SIZE);
@@ -153,13 +166,13 @@ void StartDefaultTask(void *argument)
     g_xMailbox1 = xQueueCreate(1, sizeof(uint32_t));
     if (NULL == g_xMailbox1)
     {
-        printf("xQueueCreate1 failed\r\n");
+        log_e("xQueueCreate1 failed\r\n");
         return;
     }
     g_xMailbox2 = xQueueCreate(1, sizeof(uint32_t));
     if (NULL == g_xMailbox2)
     {
-        printf("xQueueCreate2 failed\r\n");
+        log_e("xQueueCreate2 failed\r\n");
         return;
     }
     
@@ -167,11 +180,11 @@ void StartDefaultTask(void *argument)
                                                 gp_buffer1,
                                               BUFFER_SIZE))
     {
-        // printf("HAL_ADC_Start_DMA success\r\n");
+        
     }
     else
     {
-        printf("HAL_ADC_Start_DMA error\r\n");
+        log_e("HAL_ADC_Start_DMA error\r\n");
         return;
     }
 
@@ -184,51 +197,60 @@ void StartDefaultTask(void *argument)
                                             &(queue_data2), 
                                             portMAX_DELAY))
         {
-            // printf("xQueuePeek success, data: [%lu]\r\n", queue_data2);
+            if (pdTRUE == xSemaphoreTake(           g_xMutex, 
+                                              portMAX_DELAY))
+            {
+                if (0 == g_DMA_Point)
+                {
+                    log_i("gp_buffer1 data = [%lu]\r\n", gp_buffer1[0]);
+        
+                    queue2_pattern = BUFFER1_READY;
+                    while (!(pdPASS == xQueueOverwrite(g_xMailbox2,
+                                                 &queue2_pattern)))
+                    {
+                    }
+        
+                    if (HAL_OK != HAL_ADC_Start_DMA(        &hadc1, 
+                                                        gp_buffer2, 
+                                                      BUFFER_SIZE))
+                    {
+                        log_e("HAL_ADC_Start_DMA error\r\n");
+                        xSemaphoreGive(g_xMutex);
+                        return;
+                    }
+        
+                    g_DMA_Point = 1;
+                }
+                else if (1 == g_DMA_Point)
+                {
+                    log_i("gp_buffer2 data = [%lu]\r\n", gp_buffer2[0]);
+        
+                    queue2_pattern = BUFFER2_READY;
+                    while (!(pdPASS == xQueueOverwrite(g_xMailbox2,
+                                                 &queue2_pattern)))
+                    {
+        
+                    }
+        
+                    if (HAL_OK != HAL_ADC_Start_DMA(        &hadc1, 
+                                                        gp_buffer1, 
+                                                      BUFFER_SIZE))
+                    {
+                        log_e("HAL_ADC_Start_DMA error\r\n");
+                        xSemaphoreGive(g_xMutex);
+                        return;
+                    }
+        
+                    g_DMA_Point = 0;
+                }
+
+                if (pdTRUE != xSemaphoreGive(g_xMutex))
+                {
+                    log_w("Give mutex failed\r\n");
+                }
+            }
         }
 
-        if (0 == g_DMA_Point)
-        {
-            printf("gp_buffer1 data = [%lu]\r\n", gp_buffer1[0]);
-
-            queue2_pattern = BUFFER1_READY;
-            while (!(pdPASS == xQueueOverwrite(g_xMailbox2,
-                                         &queue2_pattern)))
-            {
-
-            }
-
-            if (HAL_OK != HAL_ADC_Start_DMA(        &hadc1, 
-                                                gp_buffer2, 
-                                              BUFFER_SIZE))
-            {
-                printf("HAL_ADC_Start_DMA error\r\n");
-                return;
-            }
-
-            g_DMA_Point = 1;
-        }
-        else if (1 == g_DMA_Point)
-        {
-            printf("gp_buffer2 data = [%lu]\r\n", gp_buffer2[0]);
-
-            queue2_pattern = BUFFER2_READY;
-            while (!(pdPASS == xQueueOverwrite(g_xMailbox2,
-                                         &queue2_pattern)))
-            {
-
-            }
-
-            if (HAL_OK != HAL_ADC_Start_DMA(        &hadc1, 
-                                                gp_buffer1, 
-                                              BUFFER_SIZE))
-            {
-                printf("HAL_ADC_Start_DMA error\r\n");
-                return;
-            }
-
-            g_DMA_Point = 0;
-        }
         osDelay(100);
     }
     /* USER CODE END StartDefaultTask */
@@ -252,24 +274,32 @@ void adc_output_Task(void *argument)
                                            &queue2_receive, 
                                             portMAX_DELAY))
         {
-            printf("adc_output_Task QueueReceive success ");
+            if (pdTRUE == xSemaphoreTake(             g_xMutex,
+                                                portMAX_DELAY))
+            {
+                float voltage = 0.0f;
+                if (queue2_receive == BUFFER1_READY)
+                {
+                    voltage =  (float)*gp_buffer1 * 3.3f / 4095.0f;
+                    char str[30];
+                    sprintf(str, "ADC buffer1 Voltage: %.3f V\r\n", voltage);
+                    log_i("%s", str);
+                }
+                else if (queue2_receive == BUFFER2_READY)
+                {
+                    voltage =  (float)*gp_buffer2 * 3.3f / 4095.0f;
+                    char str[30];
+                    sprintf(str, "ADC buffer2 Voltage: %.3f V\r\n", voltage);
+                    log_i("%s", str);
+                }
+    
+                if (pdTRUE != xSemaphoreGive(g_xMutex))
+                {
+                    log_w("Give mutex failed\r\n");
+                }
+            }
         }
 
-        float voltage = 0.0f;
-        if (queue2_receive == BUFFER1_READY)
-        {
-            voltage =  (float)*gp_buffer1 * 3.3f / 4095.0f;
-            char str[30];
-            sprintf(str, "%.3f V\r\n", voltage);
-            elog_i("ADC buffer1 Voltage: ", str);
-        }
-        else if (queue2_receive == BUFFER2_READY)
-        {
-            voltage =  (float)*gp_buffer2 * 3.3f / 4095.0f;
-            char str[30];
-            sprintf(str, " %.3f V\r\n", voltage);
-            elog_i("ADC buffer2 Voltage:", str);
-        }
         osDelay(100);
     }
     /* USER CODE END adc_output_Task */
@@ -293,11 +323,6 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
                                      &dma_adc_pattern_cplt, 
                                 &xHigherPriorityTaskWoken))
     {
-        // printf("xQueueSend in irq success\r\n");
-    }
-    else
-    {
-        // printf("xQueueSend in irq failed\r\n");
     }
 }
 
@@ -308,6 +333,6 @@ void HAL_ADC_ErrorCallback(ADC_HandleTypeDef *hadc)
     /* NOTE : This function Should not be modified, when the callback is needed,
               the HAL_ADC_ErrorCallback could be implemented in the user file
      */
-    printf("ADC transfer error!\r\n");
+    log_e("ADC Error Callback occurred!\r\n");
 }
 /* USER CODE END Application */
