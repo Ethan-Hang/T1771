@@ -56,10 +56,10 @@ uint32_t g_DMA_Point            =                        0;
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-extern ADC_HandleTypeDef hadc1;
-extern DMA_HandleTypeDef hdma_adc1;
-QueueHandle_t xQueue1;
-QueueHandle_t xQueue2;
+extern ADC_HandleTypeDef                             hadc1;
+extern DMA_HandleTypeDef                         hdma_adc1;
+QueueHandle_t                                  g_xMailbox1;
+QueueHandle_t                                  g_xMailbox2;
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
@@ -150,14 +150,14 @@ void StartDefaultTask(void *argument)
     memset(gp_buffer1, 0xFF, sizeof(uint32_t) * BUFFER_SIZE);
     memset(gp_buffer2, 0xFF, sizeof(uint32_t) * BUFFER_SIZE);
 
-    xQueue1 = xQueueCreate(1, sizeof(uint32_t));
-    if (NULL == xQueue1)
+    g_xMailbox1 = xQueueCreate(1, sizeof(uint32_t));
+    if (NULL == g_xMailbox1)
     {
         printf("xQueueCreate1 failed\r\n");
         return;
     }
-    xQueue2 = xQueueCreate(1, sizeof(uint32_t));
-    if (NULL == xQueue2)
+    g_xMailbox2 = xQueueCreate(1, sizeof(uint32_t));
+    if (NULL == g_xMailbox2)
     {
         printf("xQueueCreate2 failed\r\n");
         return;
@@ -180,11 +180,11 @@ void StartDefaultTask(void *argument)
 
     for (;;)
     {
-    if (pdPASS == xQueueReceive(                   xQueue1, 
+    if (pdPASS == xQueuePeek(                  g_xMailbox1, 
                                             &(queue_data2), 
                                             portMAX_DELAY))
         {
-            // printf("xQueueReceive success, data: [%lu]\r\n", queue_data2);
+            // printf("xQueuePeek success, data: [%lu]\r\n", queue_data2);
         }
 
         if (0 == g_DMA_Point)
@@ -192,11 +192,10 @@ void StartDefaultTask(void *argument)
             printf("gp_buffer1 data = [%lu]\r\n", gp_buffer1[0]);
 
             queue2_pattern = BUFFER1_READY;
-            if (pdPASS == xQueueSendToBack(        xQueue2, 
-                                           &queue2_pattern, 
-                                            portMAX_DELAY))
+            while (!(pdPASS == xQueueOverwrite(g_xMailbox2,
+                                         &queue2_pattern)))
             {
-                printf("xQueueSend buffer1 to Queue2 success\r\n");
+
             }
 
             if (HAL_OK != HAL_ADC_Start_DMA(        &hadc1, 
@@ -214,11 +213,10 @@ void StartDefaultTask(void *argument)
             printf("gp_buffer2 data = [%lu]\r\n", gp_buffer2[0]);
 
             queue2_pattern = BUFFER2_READY;
-            if (pdPASS == xQueueSendToBack(         xQueue2, 
-                                            &queue2_pattern, 
-                                             portMAX_DELAY))
+            while (!(pdPASS == xQueueOverwrite(g_xMailbox2,
+                                         &queue2_pattern)))
             {
-                // printf("xQueueSend gp_buffer2 to Queue2 success\r\n");
+
             }
 
             if (HAL_OK != HAL_ADC_Start_DMA(        &hadc1, 
@@ -250,11 +248,11 @@ void adc_output_Task(void *argument)
     uint32_t queue2_receive = BUFFER1_READY;
     for (;;)
     {
-        if (pdPASS == xQueueReceive(               xQueue2, 
+        if (pdPASS == xQueuePeek(              g_xMailbox2, 
                                            &queue2_receive, 
                                             portMAX_DELAY))
         {
-            printf("adc_output_Task QueueReceive success");
+            printf("adc_output_Task QueueReceive success ");
         }
 
         float voltage = 0.0f;
@@ -291,7 +289,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
 
     uint32_t dma_adc_pattern_cplt = DMA_ADC_CPLT_INT;
 
-    if (pdPASS == xQueueSendToBackFromISR(         xQueue1,
+    if (pdPASS == xQueueOverwriteFromISR(      g_xMailbox1,
                                      &dma_adc_pattern_cplt, 
                                 &xHigherPriorityTaskWoken))
     {
