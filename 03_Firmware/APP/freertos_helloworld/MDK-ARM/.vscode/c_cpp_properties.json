@@ -14,12 +14,18 @@
                 "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\Middlewares\\RTT",
                 "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\Middlewares\\EasyLogger\\inc",
                 "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\Middlewares\\EasyLogger\\port",
+                "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\APP\\UART_Parse\\inc",
+                "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\BSP\\USART_1\\inc",
+                "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\Middlewares\\MID_circular_buffer\\inc",
                 "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\MDK-ARM",
                 "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\Core\\Src",
                 "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\Drivers\\STM32F4xx_HAL_Driver\\Src",
                 "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\Middlewares\\Third_Party\\FreeRTOS\\Source",
                 "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\Middlewares\\Third_Party\\FreeRTOS\\Source\\portable\\MemMang",
-                "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\Middlewares\\EasyLogger\\src"
+                "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\Middlewares\\EasyLogger\\src",
+                "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\APP\\UART_Parse\\src",
+                "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\BSP\\USART_1\\src",
+                "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\Middlewares\\MID_circular_buffer\\src"
             ],
             "defines": [
                 "USE_HAL_DRIVER",

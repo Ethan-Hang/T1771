@@ -26,6 +26,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include "elog.h"
+#include "bsp_uart_driver.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -57,7 +59,21 @@ const osThreadAttr_t defaultTask_attributes = {
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
+osThreadId_t Task_uart_rec_AHandle;
+const osThreadAttr_t Task_uart_rec_A_attributes = {
+  .name = "Task_uart_rec_A",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
+void uart_rec_A_func(void *argument);
 
+/* Definitions for bsp_uart driver*/
+osThreadId_t Task_bsp_uart_rec_AHandle;
+const osThreadAttr_t Task_bsp_uart_rec_A_attributes = {
+  .name = "Task_bsp_uart_rec_A",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
@@ -96,6 +112,8 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
     /* add threads, ... */
+  Task_uart_rec_AHandle = osThreadNew(uart_rec_A_func, NULL, &Task_uart_rec_A_attributes);
+  Task_bsp_uart_rec_AHandle = osThreadNew(uart_driver_func, NULL, &Task_bsp_uart_rec_A_attributes);
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */

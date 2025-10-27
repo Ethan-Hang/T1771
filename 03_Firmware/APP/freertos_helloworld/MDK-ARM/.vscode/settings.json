@@ -1,5 +1,13 @@
 {
     "files.associations": {
-        "gpio.h": "c"
+        "gpio.h": "c",
+        "elog.h": "c",
+        "uart_parse_task.h": "c",
+        "string.h": "c",
+        "freertos.h": "c",
+        "cmsis_os.h": "c",
+        "bsp_uart_driver.h": "c",
+        "mid_circular_buffer.h": "c",
+        "task.h": "c"
     }
 }
