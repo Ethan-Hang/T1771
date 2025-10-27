@@ -117,4 +117,3 @@ uint8_t          head_pos_increse (circular_buffer_t *p_buffer,  \
 
     return 0x00;
 }
-                                    

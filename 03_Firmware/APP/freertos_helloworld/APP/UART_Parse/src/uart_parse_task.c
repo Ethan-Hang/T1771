@@ -48,12 +48,12 @@ void uart_rec_A_func(void *argument)
 
             while (0x00 != buffer_is_empty(g_circular_buffer_rec_A))
             {
-                uint32_t temp_data = 0;
+                uint8_t temp_data = 0;
                 if (0x00 == get_data(g_circular_buffer_rec_A, &temp_data))
                 {
-                    // log_d("uart_rec_A_func got data: %c", temp_data);
                 }
-                osDelay(2);
+                // log_d("uart_rec_A_func got data: %c", temp_data);
+                osDelay(5);
 
                 static uint8_t data_counter        =                  0;
                 static uint8_t temp_data_array[20] =             {0x00};
@@ -99,6 +99,7 @@ void uart_rec_A_func(void *argument)
 
                         memset(temp_data_array, 0, sizeof(temp_data_array));
                         data_counter = 0;
+                        status = FRAME_NOT_DETECTED;
                     }
                     break;
 
@@ -107,7 +108,7 @@ void uart_rec_A_func(void *argument)
                 }
             }
         }    
-        osDelay(100);
+        osDelay(1);
     }
     /* USER CODE END uart_rec_A_func */
 }

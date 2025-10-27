@@ -3,9 +3,9 @@
 
 #include <stdint.h>
 
-#define CIRCULAR_BUFFER_SIZE            10
+#define CIRCULAR_BUFFER_SIZE             64
 
-typedef uint32_t               data_type_t;
+typedef uint8_t                data_type_t;
 typedef struct
 {
     data_type_t data[CIRCULAR_BUFFER_SIZE];

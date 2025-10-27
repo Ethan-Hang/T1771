@@ -86,8 +86,8 @@ void uart_driver_func(void *argument)
                                             &receive_data, 
                                            portMAX_DELAY))
         {
+            // log_i("front receive cmd from irq [%u]", receive_data);
         }
-        log_i("front receive cmd from irq [%u]", receive_data);
         
         if (IRQ_SEND_TO_THREAD == receive_data)
         {
@@ -167,9 +167,12 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     // insert complete send queue
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
     uint32_t send_to_thread = IRQ_SEND_TO_THREAD;
-    xQueueOverwriteFromISR(          queue_uart_irq_thread,
-                                           &send_to_thread,
-                                &xHigherPriorityTaskWoken);
+    if (pdPASS == xQueueOverwriteFromISR(        queue_uart_irq_thread,
+                                                       &send_to_thread,
+                                            &xHigherPriorityTaskWoken))
+    {
+
+    }
 
     if (HAL_OK != HAL_UART_Receive_IT(&huart1, g_buffer, 1))
     {
@@ -210,7 +213,7 @@ void dma_half_irq_callback (uint32_t number_of_data)
         return;    
     }
 
-    uint32_t currunt_data_pos =         (CIRCULAR_BUFFER_SIZE / 2) - 1;
+    uint32_t currunt_data_pos =             (CIRCULAR_BUFFER_SIZE / 2);
 
     uint32_t pos_in_buffer    =  head_pos % (CIRCULAR_BUFFER_SIZE / 2);
 
@@ -221,6 +224,15 @@ void dma_half_irq_callback (uint32_t number_of_data)
     {
         log_e("head_pos_increse failed");
         return;    
+    }
+
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    uint32_t send_to_thread = IRQ_SEND_TO_THREAD;
+    if (pdPASS == xQueueOverwriteFromISR(        queue_uart_irq_thread,
+                                                       &send_to_thread,
+                                            &xHigherPriorityTaskWoken))
+    {
+        
     }
 
     //test
@@ -249,7 +261,7 @@ void dma_full_irq_callback (uint32_t number_of_data)
         return;    
     }
 
-    uint32_t currunt_data_pos =             (CIRCULAR_BUFFER_SIZE) - 1;
+    uint32_t currunt_data_pos =                 (CIRCULAR_BUFFER_SIZE);
 
     uint32_t pos_in_buffer    =      head_pos % (CIRCULAR_BUFFER_SIZE);
 
@@ -260,6 +272,15 @@ void dma_full_irq_callback (uint32_t number_of_data)
     {
         log_e("head_pos_increse failed");
         return;    
+    }
+
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    uint32_t send_to_thread = IRQ_SEND_TO_THREAD;
+    if (pdPASS == xQueueOverwriteFromISR(        queue_uart_irq_thread,
+                                                       &send_to_thread,
+                                            &xHigherPriorityTaskWoken))
+    {
+        
     }
 
     ret = get_head_pos(g_circular_buffer_irq_thread, &head_pos);
@@ -287,7 +308,7 @@ void uart_idle_irq_callback(uint32_t number_of_data)
         return;    
     }
 
-    uint32_t currunt_data_pos =                     number_of_data - 1;
+    uint32_t currunt_data_pos =                         number_of_data;
 
     uint32_t pos_in_buffer    =      head_pos % (CIRCULAR_BUFFER_SIZE);
 
@@ -307,6 +328,15 @@ void uart_idle_irq_callback(uint32_t number_of_data)
     {
         log_e("head_pos_increse failed");
         return;    
+    }
+
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    uint32_t send_to_thread = IRQ_SEND_TO_THREAD;
+    if (pdPASS == xQueueOverwriteFromISR(        queue_uart_irq_thread,
+                                                       &send_to_thread,
+                                            &xHigherPriorityTaskWoken))
+    {
+        
     }
 
     //test
