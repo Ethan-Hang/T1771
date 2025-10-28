@@ -46,6 +46,7 @@ AlignConsecutiveDeclarations:         # 连续变量声明对齐
   PadOperators: true                  # 填充操作符使对齐更整齐
 AlignConsecutiveAssignments:          # 赋值对齐
   Enabled: true
+  Consecutive: true
   AcrossEmptyLines: true              # 跨空行对齐
   AcrossComments: true                # 跨注释对齐
   AlignCompound: true
@@ -60,6 +61,9 @@ AlignTrailingComments:                # 尾部注释对齐
   OverEmptyLines: 2
 AlignEscapedNewlines: Left            # 反斜杠对齐方式
 PointerAlignment: Right               # 指针星号右对齐 (void *ptr)
+# AlignConsecutiveAssignments:
+#   Enabled: true
+#   Consecutive: true
 
 # 空格规则
 SpaceBeforeParens: ControlStatements  # 控制语句后加空格, 函数不加
@@ -71,6 +75,7 @@ SpacesInParentheses: false            # 括号内不加空格
 SpacesInSquareBrackets: false         # 方括号内不加空格
 SpacesInAngles: Never                 # 尖括号内不加空格
 SpaceBeforeSquareBrackets: false      # 方括号前不加空格
+AllowAllArgumentsOnNextLine: false    # 函数调用参数可换行
 
 # 空白行规则
 MaxEmptyLinesToKeep: 1                # 最多保留1个空行

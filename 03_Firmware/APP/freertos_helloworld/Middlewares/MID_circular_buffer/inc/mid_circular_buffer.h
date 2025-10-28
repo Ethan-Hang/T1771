@@ -35,7 +35,7 @@
 
 //******************************** Defines **********************************//
 /** @brief Maximum size of the circular buffer */
-#define CIRCULAR_BUFFER_SIZE             64
+#define CIRCULAR_BUFFER_SIZE             10
 
 /** @brief Data type stored in the circular buffer */
 typedef uint8_t                data_type_t;

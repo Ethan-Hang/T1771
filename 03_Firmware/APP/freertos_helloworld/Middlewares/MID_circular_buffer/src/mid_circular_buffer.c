@@ -180,7 +180,7 @@ uint8_t            get_data       (circular_buffer_t *p_buffer,\
         return 0xFE;
     }
 
-    *p_data = p_buffer->data[p_buffer->tail];
+    *p_data = p_buffer->data[p_buffer->tail % CIRCULAR_BUFFER_SIZE];
     p_buffer->tail++;
 
     return 0x00;
