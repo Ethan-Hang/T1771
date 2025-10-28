@@ -25,3 +25,5 @@
 #JLINK file
 JLinkLog.txt
 *.dbgconf
+
+.vsocde/
