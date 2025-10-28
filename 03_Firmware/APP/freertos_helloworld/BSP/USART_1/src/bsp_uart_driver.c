@@ -1,38 +1,81 @@
+/******************************************************************************
+ * @file bsp_uart_driver.c
+ * 
+ * @par dependencies 
+ * - bsp_uart_driver.h
+ * - usart.h
+ * - FreeRTOS.h
+ * - mid_circular_buffer.h
+ * - elog.h
+ * 
+ * @author Ethan-Hang
+ * 
+ * @brief UART driver implementation with DMA and circular buffer.
+ *        Supports two reception modes: AB buffer switching and 
+ *        circular buffer. Circular buffer mode is recommended.
+ * 
+ * Processing flow: 
+ * 1. uart_driver_func() creates buffer and starts DMA reception
+ * 2. DMA writes data directly to circular buffer
+ * 3. Interrupt callbacks (half/full/idle) update head pointer
+ * 4. Application reads data from buffer using tail pointer
+ * 
+ * @version V1.0 2025-10-28
+ *
+ * @note 1 tab == 4 spaces!
+ * 
+ *****************************************************************************/
+
+//******************************** Includes *********************************//
 #include "bsp_uart_driver.h"
+//******************************** Includes *********************************//
 
-#include "usart.h"
-
-#include "FreeRTOS.h"
-#include "task.h"
-#include "queue.h"
-
-#include "mid_circular_buffer.h"
-#include "elog.h"
-
-
+//******************************** Defines **********************************//
+/** @brief Signal code sent from interrupt to thread */
 #define IRQ_SEND_TO_THREAD 0xA1A2A3A4
 
-// #define USE_AB_BUFFER
-#define USE_CIRCULAR_BUFFER
+// #define USE_AB_BUFFER         /**< Enable AB buffer switching mode */
+#define USE_CIRCULAR_BUFFER      /**< Enable circular buffer mode     */
 
 #if defined (USE_AB_BUFFER)
+/** @brief Buffer A identifier */
 #define BUFFER_A 0
+/** @brief Buffer B identifier */
 #define BUFFER_B 1
+/** @brief Current active buffer flag (A or B) */
 uint8_t flag_AB      =  0 ;
+/** @brief Reception buffer A (1 byte) */
 uint8_t g_bufferA[1] = {0};
+/** @brief Reception buffer B (1 byte) */
 uint8_t g_bufferB[1] = {0};
 #endif
 
 #if defined (USE_CIRCULAR_BUFFER)
-
+/** @brief External queue from another task */
 extern QueueHandle_t       queue_irq_rec_A                    ;
+/** @brief Circular buffer pointer for IRQ/thread communication */
 static circular_buffer_t * g_circular_buffer_irq_thread = NULL;
+/** @brief Queue for UART IRQ to thread communication */
 static QueueHandle_t       queue_uart_irq_thread        = NULL;
+/** @brief Temporary buffer for single byte reception (IT mode) */
 uint8_t g_buffer[1] = {0};
 
 #endif
+//******************************** Defines **********************************//
 
-
+//************************** Function Implementations ***********************//
+/**
+ * @brief UART driver task function for FreeRTOS.
+ * 
+ * Initializes UART reception with AB buffer or circular buffer 
+ * method. Creates necessary queues and buffers, then enters an 
+ * infinite loop to process received data notifications from ISR.
+ * 
+ * @param[in] argument : FreeRTOS task argument (unused).
+ * 
+ * @return None
+ * 
+ * */
 void uart_driver_func(void *argument)
 {
     log_i("uart_driver_func is running...");
@@ -104,6 +147,16 @@ void uart_driver_func(void *argument)
     /* USER CODE END  */
 }
 
+/**
+ * @brief Get the circular buffer pointer used by UART driver.
+ * 
+ * Provides access to the circular buffer that stores received 
+ * UART data. Other tasks can use this to read the received data.
+ * 
+ * @return circular_buffer_t* : Pointer to circular buffer or 
+ *                               NULL if not initialized.
+ * 
+ * */
 circular_buffer_t *get_circular_buffer(void)
 {
     if (NULL == g_circular_buffer_irq_thread)
@@ -113,7 +166,18 @@ circular_buffer_t *get_circular_buffer(void)
     return g_circular_buffer_irq_thread;
 }
 
-
+/**
+ * @brief UART receive complete callback (HAL library callback).
+ * 
+ * Called by HAL library when UART reception is complete.
+ * Handles both AB buffer switching mode and circular buffer mode.
+ * In circular buffer mode, restarts reception for next byte.
+ * 
+ * @param[in] huart : Pointer to UART handle structure.
+ * 
+ * @return None
+ * 
+ * */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
     /* Prevent unused argument(s) compilation warning */
@@ -187,6 +251,18 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
 }
 
+/**
+ * @brief UART receive event callback (HAL library extended callback).
+ * 
+ * Called when UART receive event occurs (e.g., idle line detection).
+ * Currently not actively used but available for future extensions.
+ * 
+ * @param[in] huart : Pointer to UART handle structure.
+ * @param[in] Size  : Number of bytes received.
+ * 
+ * @return None
+ * 
+ * */
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 {
     /* Prevent unused argument(s) compilation warning */
@@ -199,7 +275,25 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
     // log_d("HAL_UARTEx_RxEventCallback is called size = [%u]", Size);
 }
 
-
+/**
+ * @brief DMA half-transfer complete interrupt callback.
+ * 
+ * Called when DMA has filled the first half of the circular 
+ * buffer. Calculates the number of new bytes received and updates 
+ * the buffer's head pointer. Notifies the driver task via queue.
+ * 
+ * Algorithm:
+ * 1. Get current head position
+ * 2. Calculate position in first half buffer
+ * 3. Calculate increment needed to reach half-buffer boundary
+ * 4. Update head pointer and notify task
+ * 
+ * @param[in] number_of_data : Number of bytes received 
+ *                             (should be buffer_size/2).
+ * 
+ * @return None
+ * 
+ * */
 void dma_half_irq_callback (uint32_t number_of_data)
 {
     // log_d("dma_half_irq = [%u]", number_of_data);
@@ -247,6 +341,25 @@ void dma_half_irq_callback (uint32_t number_of_data)
     log_d("pos_in_half_buffer = [%d]", pos_in_buffer);
 }
 
+/**
+ * @brief DMA full-transfer complete interrupt callback.
+ * 
+ * Called when DMA has filled the entire circular buffer and wraps 
+ * around. Calculates the number of new bytes received and updates 
+ * the buffer's head pointer. Notifies the driver task via queue.
+ * 
+ * Algorithm:
+ * 1. Get current head position
+ * 2. Calculate position in full buffer
+ * 3. Calculate increment needed to reach full-buffer boundary
+ * 4. Update head pointer and notify task
+ * 
+ * @param[in] number_of_data : Number of bytes received 
+ *                             (should be full buffer_size).
+ * 
+ * @return None
+ * 
+ * */
 void dma_full_irq_callback (uint32_t number_of_data)
 {
     // log_d("dma_full_irq = [%u]", number_of_data);
@@ -294,6 +407,26 @@ void dma_full_irq_callback (uint32_t number_of_data)
     log_d("pos_in_full_buffer = [%d]", pos_in_buffer); 
 }
 
+/**
+ * @brief UART idle line interrupt callback.
+ * 
+ * Called when UART idle condition is detected (no data for a 
+ * period). This indicates the end of a data packet. Calculates 
+ * the actual number of bytes received and updates the buffer's 
+ * head pointer. Handles buffer wrap-around correctly.
+ * 
+ * Algorithm:
+ * 1. Get current head position
+ * 2. Calculate current position in buffer
+ * 3. Calculate increment (handle wrap-around case)
+ * 4. Update head pointer and notify task
+ * 
+ * @param[in] number_of_data : Actual number of bytes received 
+ *                             before idle.
+ * 
+ * @return None
+ * 
+ * */
 void uart_idle_irq_callback(uint32_t number_of_data)
 {
     // log_d("uart_idle_irq = [%u]", number_of_data);
@@ -350,3 +483,4 @@ void uart_idle_irq_callback(uint32_t number_of_data)
     pos_in_buffer = head_pos % (CIRCULAR_BUFFER_SIZE);
     log_d("pos_in_idle_buffer = [%d]", pos_in_buffer);    
 }
+//************************** Function Implementations ***********************//

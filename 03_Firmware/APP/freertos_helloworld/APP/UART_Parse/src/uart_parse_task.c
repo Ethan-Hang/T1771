@@ -1,20 +1,64 @@
-#include "uart_parse_task.h"
-#include "mid_circular_buffer.h"
-#include "bsp_uart_driver.h"
-#include "FreeRTOS.h"
-#include "task.h"
-#include "main.h"
-#include "cmsis_os.h"
-#include "elog.h"
-#include <string.h>
-#include "queue.h"
+/******************************************************************************
+ * @file uart_parse_task.c
+ * 
+ * @par dependencies 
+ * - uart_parse_task.h
+ * - mid_circular_buffer.h
+ * - bsp_uart_driver.h
+ * - FreeRTOS.h
+ * - elog.h
+ * 
+ * @author Ethan-Hang
+ * 
+ * @brief UART data parsing task implementation with frame protocol.
+ *        Parses incoming UART data with frame detection, checksum 
+ *        verification, and data validation.
+ * 
+ * Processing flow: 
+ * 1. Wait for notification from UART driver task
+ * 2. Read data from circular buffer
+ * 3. Parse frame: header(0xFE) -> data -> checksum -> tail(0xFF)
+ * 4. Verify checksum and output valid data
+ * 
+ * @version V1.0 2025-10-28
+ *
+ * @note 1 tab == 4 spaces!
+ * 
+ *****************************************************************************/
 
+//******************************** Includes *********************************//
+#include "uart_parse_task.h"
+//******************************** Includes *********************************//
+
+//******************************** Defines **********************************//
+/** @brief Global buffer 1 (1 byte) */
 uint8_t g_buffer1[1] = {0};
+/** @brief Global buffer 2 (1 byte) */
 uint8_t g_buffer2[1] = {0};
 
+/** @brief Queue for receiving notifications from IRQ */
 QueueHandle_t             queue_irq_rec_A         = NULL;
+/** @brief Circular buffer pointer for receive task A */
 static circular_buffer_t *g_circular_buffer_rec_A = NULL;
+//******************************** Defines **********************************//
 
+//************************** Function Implementations ***********************//
+/**
+ * @brief UART receive and parse task function for FreeRTOS.
+ * 
+ * This task waits for notifications from the UART driver, then reads
+ * data from the circular buffer and parses it according to a frame
+ * protocol. The protocol format is:
+ *   [Header(0xFE)] [Data bytes] [Checksum] [Tail(0xFF)]
+ * 
+ * The checksum is calculated as the sum of all data bytes (excluding
+ * header, checksum itself, and tail).
+ * 
+ * @param[in] argument : FreeRTOS task argument (unused).
+ * 
+ * @return None
+ * 
+ * */
 void uart_rec_A_func(void *argument)
 {
     /* USER CODE BEGIN uart_rec_A_func */
@@ -44,23 +88,29 @@ void uart_rec_A_func(void *argument)
 
         if (FRONT_SEND_TO_END == receive_data)
         {
+            // Get circular buffer pointer from UART driver
             g_circular_buffer_rec_A = get_circular_buffer();
 
+            // Process all available data in the circular buffer
             while (0x00 != buffer_is_empty(g_circular_buffer_rec_A))
             {
                 uint8_t temp_data = 0;
+                // Get one byte from circular buffer
                 if (0x00 == get_data(g_circular_buffer_rec_A, &temp_data))
                 {
                 }
                 // log_d("uart_rec_A_func got data: %c", temp_data);
                 osDelay(5);
 
+                // Frame parsing state machine variables
                 static uint8_t data_counter        =                  0;
                 static uint8_t temp_data_array[20] =             {0x00};
                 static uint32_t status             = FRAME_NOT_DETECTED;
+                
                 switch (status)
                 {
                 case FRAME_NOT_DETECTED:
+                    // Wait for frame header
                     if (FRAME_HEAD_FLAG == temp_data)
                     {
                         status = FRAME_HEAD;
@@ -68,6 +118,7 @@ void uart_rec_A_func(void *argument)
                     }
 
                 case FRAME_HEAD:
+                    // Collect data until frame end
                     if (FRAME_END_FLAG != temp_data)
                     {
                         data_counter++;
@@ -75,9 +126,11 @@ void uart_rec_A_func(void *argument)
                     }
                     else
                     {
+                        // Frame end detected, verify checksum
                         uint32_t data_sum = temp_data_array[data_counter - 1];
                         uint32_t data_sum_temp = 0;
 
+                        // Calculate checksum (sum of all data bytes)
                         for (uint8_t i = 1; i < (data_counter - 1); i++)
                         {
                             data_sum_temp += temp_data_array[i];
@@ -85,11 +138,13 @@ void uart_rec_A_func(void *argument)
                         log_i("calculated sum: [%u], received sum: [%u]", 
                                                 data_sum_temp, data_sum);
 
+                        // Verify checksum and process valid data
                         if (data_sum_temp == data_sum)
                         {
                             for (uint8_t j = 1; j < (data_counter - 1); j++)
                             {
-                                log_i("Valid data received: [%x]", temp_data_array[j]);
+                                log_i("Valid data received: [%x]", 
+                                              temp_data_array[j]);
                             }
                         }
                         else
@@ -97,6 +152,7 @@ void uart_rec_A_func(void *argument)
                             log_i("InValid data received!");
                         }
 
+                        // Reset for next frame
                         memset(temp_data_array, 0, sizeof(temp_data_array));
                         data_counter = 0;
                         status = FRAME_NOT_DETECTED;
@@ -112,3 +168,5 @@ void uart_rec_A_func(void *argument)
     }
     /* USER CODE END uart_rec_A_func */
 }
+
+//************************** Function Implementations ***********************//
