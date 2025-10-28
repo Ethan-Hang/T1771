@@ -26,4 +26,4 @@
 JLinkLog.txt
 *.dbgconf
 
-.vsocde/
+.vscode/
