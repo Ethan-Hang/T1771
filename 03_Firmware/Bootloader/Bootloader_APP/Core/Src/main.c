@@ -44,7 +44,7 @@ typedef void (*pfunction)(void);
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-static pfunction JumpToAPPlication;
+//static pfunction JumpToAPPlication;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -72,7 +72,6 @@ int fputc(int ch, FILE *f)
     return ch;
 }
 
-
 void delay_s(uint32_t seconds)
 {
     for (uint32_t i = 0; i < seconds; i++)
@@ -84,39 +83,39 @@ void delay_s(uint32_t seconds)
     }
 }
 
-void DisablePeripherals(void)
-{
-    __HAL_RCC_RTC_DISABLE();
+// void DisablePeripherals(void)
+// {
+//     __HAL_RCC_RTC_DISABLE();
 
-    __disable_irq();
-}
+//     __disable_irq();
+// }
 
-void JumpToApp(void)
-{
-    uint32_t jumpAddr = 0;
-    uint32_t armAddr  = 0;
+// void JumpToApp(void)
+// {
+//     uint32_t jumpAddr = 0;
+//     uint32_t armAddr  = 0;
 
-    armAddr = *(__IO uint32_t*)APP_FLASH_ADDR;
-    delay_s(1);
-    for (uint16_t i = 0; i < 50; i++)
-    {
-    	printf("bootloader running...\r\n");
-    }
-    delay_s(1);
+//     armAddr = *(__IO uint32_t*)APP_FLASH_ADDR;
+//     delay_s(1);
+//     for (uint16_t i = 0; i < 50; i++)
+//     {
+//     	printf("bootloader running...\r\n");
+//     }
+//     delay_s(1);
 
-    if (0x20000000 == ((armAddr) & 0x2FFE0000))
-    {
-        jumpAddr = *(__IO uint32_t*)(APP_FLASH_ADDR + 4);
+//     if (0x20000000 == ((armAddr) & 0x2FFE0000))
+//     {
+//         jumpAddr = *(__IO uint32_t*)(APP_FLASH_ADDR + 4);
 
-        JumpToAPPlication = (pfunction)jumpAddr;
+//         JumpToAPPlication = (pfunction)jumpAddr;
 
-        __set_MSP(armAddr);
+//         __set_MSP(armAddr);
 
-        JumpToAPPlication();
-    }
+//         JumpToAPPlication();
+//     }
 
-    return;
-}
+//     return;
+// }
 
 /* USER CODE END 0 */
 
@@ -127,7 +126,9 @@ void JumpToApp(void)
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  SCB->VTOR = 0x08000000 | 0x00000000;
+//   SCB->VTOR = 0x08000000 | 0x00000000;
+  SCB->VTOR = FLASH_BASE | 0x19000;
+  __enable_irq();
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -150,8 +151,8 @@ int main(void)
   MX_GPIO_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  DisablePeripherals();
-  JumpToApp();
+//   DisablePeripherals();
+//   JumpToApp();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -159,7 +160,8 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    
+    printf("app running...\r\n");
+    delay_s(1);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
