@@ -106,7 +106,7 @@ void JumpToApp(void)
 
     if (0x20000000 == ((armAddr) & 0x2FFE0000))
     {
-        jumpAddr = armAddr + 4;
+        jumpAddr = *(__IO uint32_t*)(APP_FLASH_ADDR + 4);
 
         JumpToAPPlication = (pfunction)jumpAddr;
 
