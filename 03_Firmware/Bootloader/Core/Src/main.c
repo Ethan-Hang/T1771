@@ -1,36 +1,29 @@
-/* Includes ------------------------------------------------------------------*/
+/*Includes ------------------------------------------------------------------*/
+#include <stdio.h>
+
+#include "gpio.h"
 #include "main.h"
+#include "tim.h"
+
+#include "Boot_Manager.h"
 #include "Debug.h"
 #include "SEGGER_RTT.h"
 #include "elog.h"
-#include "gpio.h"
-#include "tim.h"
-// 全局定义 STM32F411xE 或者 STM32F401xx
-// 当前定义 STM32F411xE
 
-// STM32F411 外部晶振25Mhz，考虑到USB使用，内部频率设置为96Mhz
-// 需要100mhz,自行修改system_stm32f4xx.c
+/*Private typedef -----------------------------------------------------------*/
 
-/** @addtogroup Template_Project
- * @{
- */
+/*Private define ------------------------------------------------------------*/
 
-/* Private typedef -----------------------------------------------------------*/
-/* Private define ------------------------------------------------------------*/
-/* Private macro -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
+/*Private macro -------------------------------------------------------------*/
+
+/*Private variables ---------------------------------------------------------*/
 static __IO uint32_t uwTimingDelay;
 RCC_ClocksTypeDef    RCC_Clocks;
 
-/* Private function prototypes -----------------------------------------------*/
+/*Private function prototypes -----------------------------------------------*/
 
-/* Private functions ---------------------------------------------------------*/
-/*
- *power by WeAct Studio
- *The board with `WeAct` Logo && `version number` is our board, quality guarantee.
- *For more information please visit: https://github.com/WeActTC/MiniF4-STM32F4x1
- *更多信息请访问：https://gitee.com/WeActTC/MiniF4-STM32F4x1
- */
+/*Private functions ---------------------------------------------------------*/
+
 /**
  * @brief  Main program
  * @param  None
@@ -38,15 +31,11 @@ RCC_ClocksTypeDef    RCC_Clocks;
  */
 int main(void)
 {
+    //    SCB->VTOR = 0x08000000 | 0x00000000;
+
     /* Enable Clock Security System(CSS): this will generate an NMI exception
      when HSE clock fails *****************************************************/
     RCC_ClockSecuritySystemCmd(ENABLE);
-
-    /*!< At this stage the microcontroller clock setting is already configured,
-          this is done through SystemInit() function which is called from startup
-          files before to branch to application main.
-          To reconfigure the default setting of SystemInit() function,
-          refer to system_stm32f4xx.c file */
 
     /* SysTick end of count event each 1ms */
     SystemCoreClockUpdate();
@@ -55,52 +44,17 @@ int main(void)
 
     /* Add your application code here */
     /* Insert 50 ms delay */
-    Delay(50);
+    delay_ms(50);
 
-    GPIO_Config();
-    TIM_Config();
+    //    GPIO_Config();
+    //    TIM_Config();
     app_elog_init();
+
+    Jump_To_App();
 
     /* Infinite loop */
     while (1)
     {
-#if soft_pwm
-        /* C13 呼吸灯测试 */
-        static uint8_t  pwmset;
-        static uint16_t time;
-        static uint8_t  timeflag;
-        static uint8_t  timecount;
-
-        /* 呼吸灯 */
-        if (timeflag == 0)
-        {
-            time++;
-            if (time >= 1600)
-                timeflag = 1;
-        }
-        else
-        {
-            time--;
-            if (time == 0)
-                timeflag = 0;
-        }
-
-        /* 占空比设置 */
-        pwmset = time / 80;
-
-        /* 20ms 脉宽 */
-        if (timecount > 20)
-            timecount = 0;
-        else
-            timecount++;
-
-        if (timecount >= pwmset)
-            GPIO_SetBits(LED_C13_PORT, LED_C13_PIN);
-        else
-            GPIO_ResetBits(LED_C13_PORT, LED_C13_PIN);
-
-        Delay(1);
-#endif
     }
 }
 
@@ -109,7 +63,7 @@ int main(void)
  * @param  nTime: specifies the delay time length, in milliseconds.
  * @retval None
  */
-void Delay(__IO uint32_t nTime)
+void delay_ms(__IO uint32_t nTime)
 {
     uwTimingDelay = nTime;
 
@@ -151,8 +105,19 @@ void assert_failed(uint8_t *file, uint32_t line)
 }
 #endif
 
-/**
- * @}
- */
+#ifdef __GUNC__
+#define PUTCHAR_PORTOTYPE int __io_putchar(int ch)
+#else
+#define PUTCHAR_POROTOTYPE int fputc(int ch, FILE *f)
+#endif
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+/******************************************************************
+ *@brief  Retargets the C library printf function to the USART.
+ *@param  None
+ *@retval None
+ ******************************************************************/
+PUTCHAR_POROTOTYPE
+{
+    // SEGGER_RTT_PutChar(0, ch);
+    return ch;
+}
