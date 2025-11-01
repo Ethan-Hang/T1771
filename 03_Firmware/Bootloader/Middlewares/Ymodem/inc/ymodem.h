@@ -52,13 +52,13 @@
 #define NAK                     (0x15) /* negative acknowledge 无确认 */
 #define CA \
     (0x18) /* two of these in succession aborts transfer 其中两个相继中止传输 */
-#define CRC16       (0x43)   /* 'C' == 0x43, request 16-bit CRC 请求CRC */
+#define CRC16       (0x43)     /* 'C' == 0x43, request 16-bit CRC 请求CRC */
 
-#define ABORT1      (0x41)   /* 'A' == 0x41, abort by user */
-#define ABORT2      (0x61)   /* 'a' == 0x61, abort by user */
+#define ABORT1      (0x41)     /* 'A' == 0x41, abort by user */
+#define ABORT2      (0x61)     /* 'a' == 0x61, abort by user */
 
-#define NAK_TIMEOUT (0x1000) //无确认超时时间
-#define MAX_ERRORS  (3)      //最大错误数量
+#define NAK_TIMEOUT (0x100000) //无确认超时时间
+#define MAX_ERRORS  (3)        //最大错误数量
 
 /* Exported macro ------------------------------------------------------------*/
 
