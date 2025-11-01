@@ -3,11 +3,10 @@
  * 
  * All Rights Reserved.
  * 
- * @file gpio.h
+ * @file Flash.h
  * 
  * @par dependencies 
- * - stm32f4xx.h
- * - main.h
+ * - Flash.h
  * 
  * @author Jack | R&D Dept. | EternalChip 立芯嵌入式
  * 
@@ -23,24 +22,15 @@
  * 
  *****************************************************************************/
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __GPIO_H
-#define __GPIO_H
-
-#define LED_C13_PORT GPIOC
-#define LED_C13_PIN  GPIO_Pin_13
+#ifndef __FLASH_H
+#define __FLASH_H
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
 #include "stm32f4xx.h"
-//#include "Systim.h"
+#include "main.h"
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
-#define LED_OFF   GPIO_SetBits(LED_C13_PORT, LED_C13_PIN);
-#define LED_ON  GPIO_ResetBits(LED_C13_PORT, LED_C13_PIN);
 /* Exported functions ------------------------------------------------------- */
-
-extern void        Key_IO_Init(void);
-extern uint8_t        Key_Scan(void);
-extern void        Led_IO_Init(void);
-extern void    Breathing_light(void);
-#endif /* __GPIO_H */
+FLASH_Status EraseAppSector(uint32_t FLASH_Sector);
+void Flash_Write(uint32_t address, uint32_t data);
+#endif /* __FLASH_H */
