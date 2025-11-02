@@ -41,7 +41,7 @@ uint32_t       NbrOfPage        = 0;
 FLASH_Status   FLASHStatus      = FLASH_COMPLETE;
 uint32_t       RamSource;
 extern uint8_t tab_1024[1024];
-
+extern int32_t app_size;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -152,7 +152,7 @@ int32_t Ymodem_Receive(uint8_t *buf)
         errors, session_begin, size = 0;
 
     /* Initialize FlashDestination variable */
-    FlashDestination = APP_FLASH_ADDR;
+    FlashDestination = APP_BACK_FLASH_ADDR;
 
     for (session_done = 0, errors = 0, session_begin = 0;
          ;) //初始化变量，进入循环
@@ -206,7 +206,7 @@ int32_t Ymodem_Receive(uint8_t *buf)
                                         }
                                         file_size[i++] = '\0';
                                         Str2Int(file_size, &size);
-
+                                        app_size = size;
                                         /* Test the size of the image to be sent */
                                         /* Image size is greater than Flash size */
                                         if (size > (FLASH_SIZE - 1))
@@ -228,7 +228,8 @@ int32_t Ymodem_Receive(uint8_t *buf)
                                         //   FLASHStatus = FLASH_ErasePage(FlashDestination + (PageSize * EraseCounter));
                                         // }
                                         if (1 ==
-                                            Flash_erase(APP_FLASH_ADDR, size))
+                                            Flash_erase(APP_BACK_FLASH_ADDR,
+                                                        size))
                                         {
                                             Send_Byte(CA);
                                             Send_Byte(CA);
@@ -255,7 +256,7 @@ int32_t Ymodem_Receive(uint8_t *buf)
                                     RamSource = (uint32_t) buf;
                                     for (j = 0; (j < packet_length) &&
                                                 (FlashDestination <
-                                                 APP_FLASH_ADDR + size);
+                                                 APP_BACK_FLASH_ADDR + size);
                                          j += 4)
                                     {
                                         /* Program the data received into STM32F10x Flash */

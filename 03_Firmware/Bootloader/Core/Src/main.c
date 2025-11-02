@@ -1,29 +1,14 @@
-/**
-  ******************************************************************************
-	WeAct 微行创新 
-	>> 标准库实例例程
-  ******************************************************************************
-  */
-
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "Boot_Manager.h"
 #include "Debug.h"
-#include "Flash.h"
-#include "Gpio.h"
-#include "USART.h"
+#include "flash.h"
+#include "gpio.h"
+#include "usart.h"
 #include "Ymodem.h"
 #include "elog.h"
 #include "tim.h"
-// 全局定义 STM32F411xE 或者 STM32F401xx
-// 当前定义 STM32F411xE
 
-// STM32F411 外部晶振25Mhz，考虑到USB使用，内部频率设置为96Mhz
-// 需要100mhz,自行修改system_stm32f4xx.c
-
-/** @addtogroup Template_Project
-  * @{
-  */
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -35,12 +20,7 @@ RCC_ClocksTypeDef    RCC_Clocks;
 /* Private function prototypes -----------------------------------------------*/
 
 /* Private functions ---------------------------------------------------------*/
-/*
-  *power by WeAct Studio
-  *The board with `WeAct` Logo && `version number` is our board, quality guarantee. 
-  *For more information please visit: https://github.com/WeActTC/MiniF4-STM32F4x1
-  *更多信息请访问：https://gitee.com/WeActTC/MiniF4-STM32F4x1
-  */
+
 /**
   * @brief  Main program
   * @param  None
@@ -66,36 +46,48 @@ int                  main(void)
 
     /* Add your application code here */
     /* Insert 50 ms delay */
-    delay_ms(50);
+    // delay_ms(50);
     Key_IO_Init();
     Led_IO_Init();
     //TIM_Config();
     USART1_Init();
-
-    Ymodem_Receive(au8_test);
-		Jump_To_App();
     app_elog_init();
+    log_a("This is bootloader!");
 
-    log_a("Hello LiXin");
-
-    delay_ms(10);
-    
-    /* Infinite loop */
-    while (1)
+    if (Key_Scan())
     {
-        //如果是按下，则Led翻转
-        if (Key_Scan())
+        // donwload to backup area
+        Ymodem_Receive(au8_test);
+        // copy backup area data to A area
+        if (0 == Back_To_App())
         {
-            //log_a("LED ON");
-            USART_SendChar(USART1, 'A');
-            LED_ON;
+            Jump_To_App();
         }
         else
         {
-            USART_SendChar(USART1, 'B');
-            //log_a("LED OFF");
-            LED_OFF;
+
         }
+    }
+    else
+    {
+    }
+
+    /* Infinite loop */
+    while (1)
+    {
+        // //如果是按下，则Led翻转
+        // if (Key_Scan())
+        // {
+        //     //log_a("LED ON");
+        //     USART_SendChar(USART1, 'A');
+        //     LED_ON;
+        // }
+        // else
+        // {
+        //     USART_SendChar(USART1, 'B');
+        //     //log_a("LED OFF");
+        //     LED_OFF;
+        // }
     }
 }
 
