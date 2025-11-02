@@ -278,7 +278,7 @@
               <OCR_RVCT4>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x8000</Size>
+                <Size>0x80000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -315,7 +315,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>4</Optim>
+            <Optim>1</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -341,7 +341,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F411xE</Define>
               <Undefine></Undefine>
-              <IncludePath>..\MDK-ARM;..\Core\Inc;..\Drivers\STM32F4xx_StdPeriph_Driver\inc;..\Drivers\CMSIS\Device\ST\STM32F4xx\Include;..\Drivers\CMSIS\Include;..\Middlewares\EasyLogger\inc;..\Tasks\Debug\inc;..\Middlewares\RTT;..\Tasks\BootManager\inc;..\Middlewares\Ymodem\inc</IncludePath>
+              <IncludePath>..\MDK-ARM;..\Core\Inc;..\Drivers\STM32F4xx_StdPeriph_Driver\inc;..\Drivers\CMSIS\Device\ST\STM32F4xx\Include;..\Drivers\CMSIS\Include;..\Middlewares\EasyLogger\inc;..\Tasks\Debug\inc;..\Middlewares\RTT;..\Tasks\BootManager\inc;..\Middlewares\Ymodem\inc;..\Middlewares\AES\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -484,6 +484,16 @@
               <FileName>ymodem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Middlewares\Ymodem\src\ymodem.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Middlewares/AES</GroupName>
+          <Files>
+            <File>
+              <FileName>AES.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Middlewares\AES\src\AES.c</FilePath>
             </File>
           </Files>
         </Group>

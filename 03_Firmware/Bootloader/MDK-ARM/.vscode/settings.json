@@ -7,6 +7,7 @@
         "elog.h": "c",
         "usart.h": "c",
         "flash.h": "c",
-        "common.h": "c"
+        "common.h": "c",
+        "aes.h": "c"
     }
 }

@@ -311,7 +311,7 @@ int32_t Ymodem_Receive(uint8_t *buf)
             break;
         }
     }
-    return (int32_t) size;
+    return size;
 }
 
 /**

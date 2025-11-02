@@ -2,13 +2,12 @@
 #include "main.h"
 #include "Boot_Manager.h"
 #include "Debug.h"
-#include "flash.h"
-#include "gpio.h"
-#include "usart.h"
 #include "Ymodem.h"
 #include "elog.h"
+#include "flash.h"
+#include "gpio.h"
 #include "tim.h"
-
+#include "usart.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -26,6 +25,7 @@ RCC_ClocksTypeDef    RCC_Clocks;
   * @param  None
   * @retval None
   */
+int32_t              fil_size = 0;
 uint8_t              au8_test[1024];
 int                  main(void)
 {
@@ -57,37 +57,42 @@ int                  main(void)
     if (Key_Scan())
     {
         // donwload to backup area
-        Ymodem_Receive(au8_test);
+        fil_size = Ymodem_Receive(au8_test);
         // copy backup area data to A area
-        if (0 == Back_To_App())
+        if (0 == Back_To_App(fil_size))
         {
             Jump_To_App();
         }
         else
         {
-
+            log_i("Back to app failed!");
         }
     }
     else
     {
+        Jump_To_App();
     }
 
     /* Infinite loop */
     while (1)
     {
-        // //如果是按下，则Led翻转
-        // if (Key_Scan())
-        // {
-        //     //log_a("LED ON");
-        //     USART_SendChar(USART1, 'A');
-        //     LED_ON;
-        // }
-        // else
-        // {
-        //     USART_SendChar(USART1, 'B');
-        //     //log_a("LED OFF");
-        //     LED_OFF;
-        // }
+        log_e("No Valid App,Please press key and download new App!");
+        if (Key_Scan())
+        {
+            //按下
+            /*1.下载到备份区*/
+            fil_size = Ymodem_Receive(au8_test);
+            /*2.备份区数据拷贝到A区中*/
+            if (0 == Back_To_App(fil_size))
+            {
+                Jump_To_App();
+            }
+            else
+            {
+                //
+            }
+        }
+        delay_ms(50);
     }
 }
 
