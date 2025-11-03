@@ -28,6 +28,7 @@
 #include "common.h"
 #include "flash.h"
 #include "stm32f4xx_flash.h"
+#include "w25qxx_Handler.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -148,7 +149,7 @@ int32_t Ymodem_Receive(uint8_t *buf)
 {
     uint8_t packet_data[PACKET_1K_SIZE + PACKET_OVERHEAD],
         file_size[FILE_SIZE_LENGTH], *file_ptr, *buf_ptr = buf;
-    int32_t i, j, packet_length, session_done, file_done, packets_received,
+    int32_t i, packet_length, session_done, file_done, packets_received,
         errors, session_begin, size = 0;
 
     /* Initialize FlashDestination variable */
@@ -227,14 +228,14 @@ int32_t Ymodem_Receive(uint8_t *buf)
                                         // {
                                         //   FLASHStatus = FLASH_ErasePage(FlashDestination + (PageSize * EraseCounter));
                                         // }
-                                        if (1 ==
-                                            Flash_erase(APP_BACK_FLASH_ADDR,
-                                                        size))
-                                        {
-                                            Send_Byte(CA);
-                                            Send_Byte(CA);
-                                            return -1;
-                                        }
+                                        // if (1 ==
+                                        //     Flash_erase(APP_BACK_FLASH_ADDR,
+                                        //                 size))
+                                        // {
+                                        //     Send_Byte(CA);
+                                        //     Send_Byte(CA);
+                                        //     return -1;
+                                        // }
                                         Send_Byte(ACK);
                                         Send_Byte(CRC16);
                                     }
@@ -253,29 +254,30 @@ int32_t Ymodem_Receive(uint8_t *buf)
                                     memcpy(buf_ptr,
                                            packet_data + PACKET_HEADER,
                                            packet_length);
-                                    RamSource = (uint32_t) buf;
-                                    for (j = 0; (j < packet_length) &&
-                                                (FlashDestination <
-                                                 APP_BACK_FLASH_ADDR + size);
-                                         j += 4)
-                                    {
-                                        /* Program the data received into STM32F10x Flash */
-                                        // FLASH_ProgramWord(
-                                        //     FlashDestination,
-                                        //     *(uint32_t *) RamSource);
-                                        Flash_Write(FlashDestination,
-                                                    *(uint32_t *) RamSource);
-                                        if (*(uint32_t *) FlashDestination !=
-                                            *(uint32_t *) RamSource)
-                                        {
-                                            /* End session */
-                                            Send_Byte(CA);
-                                            Send_Byte(CA);
-                                            return -2;
-                                        }
-                                        FlashDestination += 4;
-                                        RamSource        += 4;
-                                    }
+                                    W25Q64_WriteData(buf_ptr, packet_length);
+                                    // RamSource = (uint32_t) buf;
+                                    // for (j = 0; (j < packet_length) &&
+                                    //             (FlashDestination <
+                                    //              APP_BACK_FLASH_ADDR + size);
+                                    //      j += 4)
+                                    // {
+                                    //     /* Program the data received into STM32F10x Flash */
+                                    //     // FLASH_ProgramWord(
+                                    //     //     FlashDestination,
+                                    //     //     *(uint32_t *) RamSource);
+                                    //     Flash_Write(FlashDestination,
+                                    //                 *(uint32_t *) RamSource);
+                                    //     if (*(uint32_t *) FlashDestination !=
+                                    //         *(uint32_t *) RamSource)
+                                    //     {
+                                    //         /* End session */
+                                    //         Send_Byte(CA);
+                                    //         Send_Byte(CA);
+                                    //         return -2;
+                                    //     }
+                                    //     FlashDestination += 4;
+                                    //     RamSource        += 4;
+                                    // }
                                     Send_Byte(ACK);
                                 }
                                 packets_received++;
@@ -311,6 +313,7 @@ int32_t Ymodem_Receive(uint8_t *buf)
             break;
         }
     }
+    W25Q64_WriteData_End();
     return size;
 }
 

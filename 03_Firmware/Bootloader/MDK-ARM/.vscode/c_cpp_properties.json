@@ -14,11 +14,13 @@
                 "g:\\STM32\\LIXIN\\03_Firmware\\Bootloader\\Tasks\\BootManager\\inc",
                 "g:\\STM32\\LIXIN\\03_Firmware\\Bootloader\\Middlewares\\Ymodem\\inc",
                 "g:\\STM32\\LIXIN\\03_Firmware\\Bootloader\\Middlewares\\AES\\inc",
+                "g:\\STM32\\LIXIN\\03_Firmware\\Bootloader\\Bsp\\W25Qxx\\inc",
                 "g:\\STM32\\LIXIN\\03_Firmware\\Bootloader\\Core\\Src",
                 "g:\\STM32\\LIXIN\\03_Firmware\\Bootloader\\Middlewares\\EasyLogger\\src",
                 "g:\\STM32\\LIXIN\\03_Firmware\\Bootloader\\Middlewares\\EasyLogger\\port",
                 "g:\\STM32\\LIXIN\\03_Firmware\\Bootloader\\Middlewares\\Ymodem\\src",
                 "g:\\STM32\\LIXIN\\03_Firmware\\Bootloader\\Middlewares\\AES\\src",
+                "g:\\STM32\\LIXIN\\03_Firmware\\Bootloader\\Bsp\\W25Qxx\\src",
                 "g:\\STM32\\LIXIN\\03_Firmware\\Bootloader\\Drivers\\STM32F4xx_StdPeriph_Driver\\src",
                 "g:\\STM32\\LIXIN\\03_Firmware\\Bootloader\\Tasks\\Debug\\src",
                 "g:\\STM32\\LIXIN\\03_Firmware\\Bootloader\\Tasks\\BootManager\\src"

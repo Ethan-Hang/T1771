@@ -41,7 +41,7 @@
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
-
+volatile uint32_t SysTickUptime = 0;
 /******************************************************************************/
 /*            Cortex-M4 Processor Exceptions Handlers                         */
 /******************************************************************************/
@@ -141,6 +141,8 @@ void PendSV_Handler(void)
   */
 void SysTick_Handler(void)
 {
+	//49 days overflow
+	SysTickUptime++;
   TimingDelay_Decrement();
 }
 

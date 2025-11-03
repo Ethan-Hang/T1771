@@ -5,6 +5,7 @@
 #include "flash.h"
 #include "main.h"
 #include "AES.h"
+#include "w25qxx_Handler.h"
 
 typedef void (*pFunction)(void);
 #define APP_FLASH_ADDR      0x8008000

@@ -341,7 +341,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F411xE</Define>
               <Undefine></Undefine>
-              <IncludePath>..\MDK-ARM;..\Core\Inc;..\Drivers\STM32F4xx_StdPeriph_Driver\inc;..\Drivers\CMSIS\Device\ST\STM32F4xx\Include;..\Drivers\CMSIS\Include;..\Middlewares\EasyLogger\inc;..\Tasks\Debug\inc;..\Middlewares\RTT;..\Tasks\BootManager\inc;..\Middlewares\Ymodem\inc;..\Middlewares\AES\inc</IncludePath>
+              <IncludePath>..\MDK-ARM;..\Core\Inc;..\Drivers\STM32F4xx_StdPeriph_Driver\inc;..\Drivers\CMSIS\Device\ST\STM32F4xx\Include;..\Drivers\CMSIS\Include;..\Middlewares\EasyLogger\inc;..\Tasks\Debug\inc;..\Middlewares\RTT;..\Tasks\BootManager\inc;..\Middlewares\Ymodem\inc;..\Middlewares\AES\inc;..\Bsp\W25Qxx\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -414,6 +414,11 @@
               <FileName>flash.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Core\Src\flash.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\spi.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -494,6 +499,21 @@
               <FileName>AES.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Middlewares\AES\src\AES.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>BSP</GroupName>
+          <Files>
+            <File>
+              <FileName>w25qxx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Bsp\W25Qxx\src\w25qxx.c</FilePath>
+            </File>
+            <File>
+              <FileName>w25qxx_Handler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Bsp\W25Qxx\src\w25qxx_Handler.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -1,4 +1,8 @@
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'F:\keil\ARM\ARM-COMPLIER-506\Bin'
 Build target 'Bootloader'
+compiling w25qxx_Handler.c...
+linking...
+Program Size: Code=17576 RO-data=1720 RW-data=192 ZI-data=13296  
+FromELF: creating hex file...
 ".\Objects\Bootloader.axf" - 0 Error(s), 0 Warning(s).
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:02

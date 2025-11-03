@@ -8,6 +8,8 @@
         "usart.h": "c",
         "flash.h": "c",
         "common.h": "c",
-        "aes.h": "c"
+        "aes.h": "c",
+        "w25qxx.h": "c",
+        "w25qxx_handler.h": "c"
     }
 }

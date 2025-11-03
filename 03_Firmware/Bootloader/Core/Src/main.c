@@ -8,6 +8,8 @@
 #include "gpio.h"
 #include "tim.h"
 #include "usart.h"
+#include "spi.h"
+#include "w25qxx_Handler.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -53,6 +55,9 @@ int                  main(void)
     USART1_Init();
     app_elog_init();
     log_a("This is bootloader!");
+
+    SPI1_Init();
+    W25Q64_Init();
 
     if (Key_Scan())
     {
