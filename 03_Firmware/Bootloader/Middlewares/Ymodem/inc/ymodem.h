@@ -1,29 +1,29 @@
 /**
-  ******************************************************************************
-  * @file    STM32F0xx_IAP/inc/ymodem.h 
-  * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    29-May-2012
-  * @brief   Header for main.c module
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
-  *
-  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * @file    STM32F0xx_IAP/inc/ymodem.h
+ * @author  MCD Application Team
+ * @version V1.0.0
+ * @date    29-May-2012
+ * @brief   Header for main.c module
+ ******************************************************************************
+ * @attention
+ *
+ * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
+ *
+ * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at:
+ *
+ *        http://www.st.com/software_license_agreement_liberty_v2
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ ******************************************************************************
+ */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef _YMODEM_H_
@@ -50,15 +50,16 @@
 #define EOT                     (0x04) /* end of transmission 结束传输 */
 #define ACK                     (0x06) /* acknowledge 确认*/
 #define NAK                     (0x15) /* negative acknowledge 无确认 */
-#define CA \
-    (0x18) /* two of these in succession aborts transfer 其中两个相继中止传输 */
+#define CA                                                                       \
+    (0x18) /* two of these in succession aborts transfer 其中两个相继中止传输 \
+            */
 #define CRC16       (0x43)     /* 'C' == 0x43, request 16-bit CRC 请求CRC */
 
 #define ABORT1      (0x41)     /* 'A' == 0x41, abort by user */
 #define ABORT2      (0x61)     /* 'a' == 0x61, abort by user */
 
-#define NAK_TIMEOUT (0x100000) //无确认超时时间
-#define MAX_ERRORS  (3)        //最大错误数量
+#define NAK_TIMEOUT (0x100000) // 无确认超时时间
+#define MAX_ERRORS  (3)        // 最大错误数量
 
 /* Exported macro ------------------------------------------------------------*/
 
@@ -69,12 +70,9 @@ uint16_t UpdateCRC16(uint16_t crcIn, uint8_t byte);
 uint16_t Cal_CRC16(const uint8_t *data, uint32_t size);
 uint8_t  CalChecksum(const uint8_t *data, uint32_t size);
 int32_t  Ymodem_CheckResponse(uint8_t c);
-void     Ymodem_PrepareIntialPacket(uint8_t       *data,
-                                    const uint8_t *fileName,
-                                    uint32_t      *length);
-void     Ymodem_PreparePacket(uint8_t *SourceBuf,
-                              uint8_t *data,
-                              uint8_t  pktNo,
+void     Ymodem_PrepareIntialPacket(uint8_t *data, const uint8_t *fileName,
+                                    uint32_t *length);
+void     Ymodem_PreparePacket(uint8_t *SourceBuf, uint8_t *data, uint8_t pktNo,
                               uint32_t sizeBlk);
 void     Ymodem_SendPacket(uint8_t *data, uint16_t length);
 

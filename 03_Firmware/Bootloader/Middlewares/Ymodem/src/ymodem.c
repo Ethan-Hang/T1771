@@ -1,27 +1,27 @@
 /**
-  ******************************************************************************
-  * @file    IAP/src/ymodem.c 
-  * @author  MCD Application Team
-  * @version V3.3.0
-  * @date    10/15/2010
-  * @brief   This file provides all the software functions related to the ymodem 
-  *          protocol.
-  ******************************************************************************
-  * @copy
-  *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
-  *
-  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
-  */
+ ******************************************************************************
+ * @file    IAP/src/ymodem.c
+ * @author  MCD Application Team
+ * @version V3.3.0
+ * @date    10/15/2010
+ * @brief   This file provides all the software functions related to the ymodem
+ *          protocol.
+ ******************************************************************************
+ * @copy
+ *
+ * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
+ * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
+ * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
+ * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
+ * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
+ * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+ *
+ * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
+ */
 
 /** @addtogroup IAP
-  * @{
-  */
+ * @{
+ */
 
 /* Includes ------------------------------------------------------------------*/
 #include "Boot_Manager.h"
@@ -47,12 +47,12 @@ extern int32_t app_size;
 /* Private functions ---------------------------------------------------------*/
 
 /**
-  * @brief  Receive byte from sender
-  * @param  c: Character
-  * @param  timeout: Timeout
-  * @retval 0: Byte received
-  *         -1: Timeout
-  */
+ * @brief  Receive byte from sender
+ * @param  c: Character
+ * @param  timeout: Timeout
+ * @retval 0: Byte received
+ *         -1: Timeout
+ */
 static int32_t Receive_Byte(uint8_t *c, uint32_t timeout)
 {
     while (timeout-- > 0)
@@ -66,10 +66,10 @@ static int32_t Receive_Byte(uint8_t *c, uint32_t timeout)
 }
 
 /**
-  * @brief  Send a byte
-  * @param  c: Character
-  * @retval 0: Byte sent
-  */
+ * @brief  Send a byte
+ * @param  c: Character
+ * @retval 0: Byte sent
+ */
 static uint32_t Send_Byte(uint8_t c)
 {
     SerialPutChar(c);
@@ -77,17 +77,17 @@ static uint32_t Send_Byte(uint8_t c)
 }
 
 /**
-  * @brief  Receive a packet from sender
-  * @param  data
-  * @param  length
-  * @param  timeout
-  *     0: end of transmission
-  *    -1: abort by sender
-  *    >0: packet length
-  * @retval 0: normally return
-  *        -1: timeout or packet error
-  *         1: abort by user
-  */
+ * @brief  Receive a packet from sender
+ * @param  data
+ * @param  length
+ * @param  timeout
+ *     0: end of transmission
+ *    -1: abort by sender
+ *    >0: packet length
+ * @retval 0: normally return
+ *        -1: timeout or packet error
+ *         1: abort by user
+ */
 static int32_t Receive_Packet(uint8_t *data, int32_t *length, uint32_t timeout)
 {
     uint16_t i, packet_size;
@@ -141,22 +141,22 @@ static int32_t Receive_Packet(uint8_t *data, int32_t *length, uint32_t timeout)
 }
 
 /**
-  * @brief  Receive a file using the ymodem protocol
-  * @param  buf: Address of the first byte
-  * @retval The size of the file
-  */
+ * @brief  Receive a file using the ymodem protocol
+ * @param  buf: Address of the first byte
+ * @retval The size of the file
+ */
 int32_t Ymodem_Receive(uint8_t *buf)
 {
     uint8_t packet_data[PACKET_1K_SIZE + PACKET_OVERHEAD],
         file_size[FILE_SIZE_LENGTH], *file_ptr, *buf_ptr = buf;
-    int32_t i, packet_length, session_done, file_done, packets_received,
-        errors, session_begin, size = 0;
+    int32_t i, packet_length, session_done, file_done, packets_received, errors,
+        session_begin, size = 0;
 
     /* Initialize FlashDestination variable */
     FlashDestination = APP_BACK_FLASH_ADDR;
 
     for (session_done = 0, errors = 0, session_begin = 0;
-         ;) //初始化变量，进入循环
+         ;) // 初始化变量，进入循环
     {
         for (packets_received = 0, file_done = 0;;)
         {
@@ -190,9 +190,8 @@ int32_t Ymodem_Receive(uint8_t *buf)
                                     if (packet_data[PACKET_HEADER] != 0)
                                     {
                                         /* Filename packet has valid data */
-                                        for (i = 0,
-                                            file_ptr =
-                                                 packet_data + PACKET_HEADER;
+                                        for (i = 0, file_ptr = packet_data +
+                                                               PACKET_HEADER;
                                              (*file_ptr != 0) &&
                                              (i < FILE_NAME_LENGTH);)
                                         {
@@ -208,8 +207,10 @@ int32_t Ymodem_Receive(uint8_t *buf)
                                         file_size[i++] = '\0';
                                         Str2Int(file_size, &size);
                                         app_size = size;
-                                        /* Test the size of the image to be sent */
-                                        /* Image size is greater than Flash size */
+                                        /* Test the size of the image to be sent
+                                         */
+                                        /* Image size is greater than Flash size
+                                         */
                                         if (size > (FLASH_SIZE - 1))
                                         {
                                             /* End session */
@@ -218,24 +219,31 @@ int32_t Ymodem_Receive(uint8_t *buf)
                                             return -1;
                                         }
 
-                                        /* Erase the needed pages where the user application will be loaded */
-                                        /* Define the number of page to be erased */
-                                        //                    NbrOfPage = FLASH_PagesMask(size);
+                                        /* Erase the needed pages where the user
+                                         * application will be loaded */
+                                        /* Define the number of page to be
+                                         * erased */
+                                        //                    NbrOfPage =
+                                        //                    FLASH_PagesMask(size);
 
                                         /* Erase the FLASH pages */
-                                        //擦除App
-                                        // for (EraseCounter = 0; (EraseCounter < NbrOfPage) && (FLASHStatus == FLASH_COMPLETE); EraseCounter++)
-                                        // {
-                                        //   FLASHStatus = FLASH_ErasePage(FlashDestination + (PageSize * EraseCounter));
-                                        // }
-                                        // if (1 ==
-                                        //     Flash_erase(APP_BACK_FLASH_ADDR,
-                                        //                 size))
-                                        // {
-                                        //     Send_Byte(CA);
-                                        //     Send_Byte(CA);
-                                        //     return -1;
-                                        // }
+                                        // 擦除App
+                                        //  for (EraseCounter = 0; (EraseCounter
+                                        //  < NbrOfPage) && (FLASHStatus ==
+                                        //  FLASH_COMPLETE); EraseCounter++)
+                                        //  {
+                                        //    FLASHStatus =
+                                        //    FLASH_ErasePage(FlashDestination +
+                                        //    (PageSize * EraseCounter));
+                                        //  }
+                                        //  if (1 ==
+                                        //      Flash_erase(APP_BACK_FLASH_ADDR,
+                                        //                  size))
+                                        //  {
+                                        //      Send_Byte(CA);
+                                        //      Send_Byte(CA);
+                                        //      return -1;
+                                        //  }
                                         Send_Byte(ACK);
                                         Send_Byte(CRC16);
                                     }
@@ -251,8 +259,7 @@ int32_t Ymodem_Receive(uint8_t *buf)
                                 /* Data packet */
                                 else
                                 {
-                                    memcpy(buf_ptr,
-                                           packet_data + PACKET_HEADER,
+                                    memcpy(buf_ptr, packet_data + PACKET_HEADER,
                                            packet_length);
                                     W25Q64_WriteData(buf_ptr, packet_length);
                                     // RamSource = (uint32_t) buf;
@@ -261,7 +268,8 @@ int32_t Ymodem_Receive(uint8_t *buf)
                                     //              APP_BACK_FLASH_ADDR + size);
                                     //      j += 4)
                                     // {
-                                    //     /* Program the data received into STM32F10x Flash */
+                                    //     /* Program the data received into
+                                    //     STM32F10x Flash */
                                     //     // FLASH_ProgramWord(
                                     //     //     FlashDestination,
                                     //     //     *(uint32_t *) RamSource);
@@ -318,23 +326,22 @@ int32_t Ymodem_Receive(uint8_t *buf)
 }
 
 /**
-  * @brief  check response using the ymodem protocol
-  * @param  buf: Address of the first byte
-  * @retval The size of the file
-  */
+ * @brief  check response using the ymodem protocol
+ * @param  buf: Address of the first byte
+ * @retval The size of the file
+ */
 int32_t Ymodem_CheckResponse(uint8_t c)
 {
     return 0;
 }
 
 /**
-  * @brief  Prepare the first block
-  * @param  timeout
-  *     0: end of transmission
-  */
-void Ymodem_PrepareIntialPacket(uint8_t       *data,
-                                const uint8_t *fileName,
-                                uint32_t      *length)
+ * @brief  Prepare the first block
+ * @param  timeout
+ *     0: end of transmission
+ */
+void Ymodem_PrepareIntialPacket(uint8_t *data, const uint8_t *fileName,
+                                uint32_t *length)
 {
     uint16_t i, j;
     uint8_t  file_ptr[10];
@@ -365,13 +372,11 @@ void Ymodem_PrepareIntialPacket(uint8_t       *data,
 }
 
 /**
-  * @brief  Prepare the data packet
-  * @param  timeout
-  *     0: end of transmission
-  */
-void Ymodem_PreparePacket(uint8_t *SourceBuf,
-                          uint8_t *data,
-                          uint8_t  pktNo,
+ * @brief  Prepare the data packet
+ * @param  timeout
+ *     0: end of transmission
+ */
+void Ymodem_PreparePacket(uint8_t *SourceBuf, uint8_t *data, uint8_t pktNo,
                           uint32_t sizeBlk)
 {
     uint16_t i, size, packetSize;
@@ -407,11 +412,11 @@ void Ymodem_PreparePacket(uint8_t *SourceBuf,
 }
 
 /**
-  * @brief  Update CRC16 for input byte
-  * @param  CRC input value 
-  * @param  input byte
-   * @retval None
-  */
+ * @brief  Update CRC16 for input byte
+ * @param  CRC input value
+ * @param  input byte
+ * @retval None
+ */
 uint16_t UpdateCRC16(uint16_t crcIn, uint8_t byte)
 {
     uint32_t crc = crcIn;
@@ -429,11 +434,11 @@ uint16_t UpdateCRC16(uint16_t crcIn, uint8_t byte)
 }
 
 /**
-  * @brief  Cal CRC16 for YModem Packet
-  * @param  data
-  * @param  length
-   * @retval None
-  */
+ * @brief  Cal CRC16 for YModem Packet
+ * @param  data
+ * @param  length
+ * @retval None
+ */
 uint16_t Cal_CRC16(const uint8_t *data, uint32_t size)
 {
     uint32_t       crc     = 0;
@@ -447,11 +452,11 @@ uint16_t Cal_CRC16(const uint8_t *data, uint32_t size)
 }
 
 /**
-  * @brief  Cal Check sum for YModem Packet
-  * @param  data
-  * @param  length
-   * @retval None
-  */
+ * @brief  Cal Check sum for YModem Packet
+ * @param  data
+ * @param  length
+ * @retval None
+ */
 uint8_t CalChecksum(const uint8_t *data, uint32_t size)
 {
     uint32_t       sum     = 0;
@@ -462,11 +467,11 @@ uint8_t CalChecksum(const uint8_t *data, uint32_t size)
 }
 
 /**
-  * @brief  Transmit a data packet using the ymodem protocol
-  * @param  data
-  * @param  length
-   * @retval None
-  */
+ * @brief  Transmit a data packet using the ymodem protocol
+ * @param  data
+ * @param  length
+ * @retval None
+ */
 void Ymodem_SendPacket(uint8_t *data, uint16_t length)
 {
     uint16_t i;
@@ -479,12 +484,12 @@ void Ymodem_SendPacket(uint8_t *data, uint16_t length)
 }
 
 /**
-  * @brief  Transmit a file using the ymodem protocol
-  * @param  buf: Address of the first byte
-  * @retval The size of the file
-  */
-uint8_t
-Ymodem_Transmit(uint8_t *buf, const uint8_t *sendFileName, uint32_t sizeFile)
+ * @brief  Transmit a file using the ymodem protocol
+ * @param  buf: Address of the first byte
+ * @retval The size of the file
+ */
+uint8_t Ymodem_Transmit(uint8_t *buf, const uint8_t *sendFileName,
+                        uint32_t sizeFile)
 {
     uint8_t  packet_data[PACKET_1K_SIZE + PACKET_OVERHEAD];
     uint8_t  FileName[FILE_NAME_LENGTH];
@@ -705,7 +710,7 @@ Ymodem_Transmit(uint8_t *buf, const uint8_t *sendFileName, uint32_t sizeFile)
 }
 
 /**
-  * @}
-  */
+ * @}
+ */
 
 /*******************(C)COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/

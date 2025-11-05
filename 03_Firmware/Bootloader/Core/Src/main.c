@@ -6,9 +6,10 @@
 #include "elog.h"
 #include "flash.h"
 #include "gpio.h"
+#include "spi.h"
 #include "tim.h"
 #include "usart.h"
-#include "spi.h"
+
 #include "w25qxx_Handler.h"
 
 /* Private typedef -----------------------------------------------------------*/
@@ -17,28 +18,27 @@
 /* Private variables ---------------------------------------------------------*/
 static __IO uint32_t uwTimingDelay;
 RCC_ClocksTypeDef    RCC_Clocks;
-
+int32_t              fil_size = 0;
+uint8_t              au8_test[1024];
 /* Private function prototypes -----------------------------------------------*/
 
 /* Private functions ---------------------------------------------------------*/
 
 /**
-  * @brief  Main program
-  * @param  None
-  * @retval None
-  */
-int32_t              fil_size = 0;
-uint8_t              au8_test[1024];
+ * @brief  Main program
+ * @param  None
+ * @retval None
+ */
 int                  main(void)
 {
     /* Enable Clock Security System(CSS): this will generate an NMI exception
      when HSE clock fails *****************************************************/
     RCC_ClockSecuritySystemCmd(ENABLE);
 
-    /*!< At this stage the microcontroller clock setting is already configured, 
+    /*!< At this stage the microcontroller clock setting is already configured,
        this is done through SystemInit() function which is called from startup
        files before to branch to application main.
-       To reconfigure the default setting of SystemInit() function, 
+       To reconfigure the default setting of SystemInit() function,
        refer to system_stm32f4xx.c file */
 
     /* SysTick end of count event each 1ms */
@@ -51,7 +51,7 @@ int                  main(void)
     // delay_ms(50);
     Key_IO_Init();
     Led_IO_Init();
-    //TIM_Config();
+    // TIM_Config();
     USART1_Init();
     app_elog_init();
     log_a("This is bootloader!");
@@ -84,7 +84,7 @@ int                  main(void)
         log_e("No Valid App,Please press key and download new App!");
         if (Key_Scan())
         {
-            //按下
+            // 按下
             /*1.下载到备份区*/
             fil_size = Ymodem_Receive(au8_test);
             /*2.备份区数据拷贝到A区中*/
@@ -102,10 +102,10 @@ int                  main(void)
 }
 
 /**
-  * @brief  Inserts a delay time.
-  * @param  nTime: specifies the delay time length, in milliseconds.
-  * @retval None
-  */
+ * @brief  Inserts a delay time.
+ * @param  nTime: specifies the delay time length, in milliseconds.
+ * @retval None
+ */
 void delay_ms(__IO uint32_t nTime)
 {
     uwTimingDelay = nTime;
@@ -115,10 +115,10 @@ void delay_ms(__IO uint32_t nTime)
 }
 
 /**
-  * @brief  Decrements the TimingDelay variable.
-  * @param  None
-  * @retval None
-  */
+ * @brief  Decrements the TimingDelay variable.
+ * @param  None
+ * @retval None
+ */
 void TimingDelay_Decrement(void)
 {
     if (uwTimingDelay != 0x00)
@@ -130,16 +130,17 @@ void TimingDelay_Decrement(void)
 #ifdef USE_FULL_ASSERT
 
 /**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
+ * @brief  Reports the name of the source file and the source line number
+ *         where the assert_param error has occurred.
+ * @param  file: pointer to the source file name
+ * @param  line: assert_param error line source number
+ * @retval None
+ */
 void assert_failed(uint8_t *file, uint32_t line)
 {
-    /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+    /* User can add his own implementation to report the file name and line
+     number, ex: printf("Wrong parameters value: file %s on line %d\r\n", file,
+     line) */
 
     /* Infinite loop */
     while (1)
@@ -149,7 +150,7 @@ void assert_failed(uint8_t *file, uint32_t line)
 #endif
 
 /**
-  * @}
-  */
+ * @}
+ */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
