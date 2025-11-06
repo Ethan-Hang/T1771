@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "iic.h": "c",
+        "main.h": "c",
+        "ymodem.h": "c",
+        "common.h": "c",
+        "swc_ota.h": "c",
+        "stdlib.h": "c",
+        "w25q_handler.h": "c",
+        "at24cxx_driver.h": "c"
+    }
+}
