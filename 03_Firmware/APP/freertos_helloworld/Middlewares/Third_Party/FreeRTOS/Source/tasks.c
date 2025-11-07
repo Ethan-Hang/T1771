@@ -257,6 +257,10 @@ typedef struct tskTaskControlBlock 			/* The old naming convention is used to pr
 		xMPU_SETTINGS	xMPUSettings;		/*< The MPU settings are defined as part of the port layer.  THIS MUST BE THE SECOND MEMBER OF THE TCB STRUCT. */
 	#endif
 
+	#if ( portUSING_MPU_WRAPPERS <= 0 )
+		UBaseType_t     uxSizeOfStack;		/*< Stack size in words, not bytes. */
+	#endif
+
 	ListItem_t			xStateListItem;	/*< The list that the state list item of a task is reference from denotes the state of that task (Ready, Blocked, Suspended ). */
 	ListItem_t			xEventListItem;		/*< Used to reference a task from an event list. */
 	UBaseType_t			uxPriority;			/*< The priority of the task.  0 is the lowest priority. */
@@ -863,6 +867,7 @@ UBaseType_t x;
 	{
 		pxTopOfStack = &( pxNewTCB->pxStack[ ulStackDepth - ( uint32_t ) 1 ] );
 		pxTopOfStack = ( StackType_t * ) ( ( ( portPOINTER_SIZE_TYPE ) pxTopOfStack ) & ( ~( ( portPOINTER_SIZE_TYPE ) portBYTE_ALIGNMENT_MASK ) ) ); /*lint !e923 !e9033 !e9078 MISRA exception.  Avoiding casts between pointers and integers is not practical.  Size differences accounted for using portPOINTER_SIZE_TYPE type.  Checked by assert(). */
+		pxNewTCB->uxSizeOfStack = ulStackDepth; /*<support for cmbacktrace\>*/
 
 		/* Check the alignment of the calculated top of stack is correct. */
 		configASSERT( ( ( ( portPOINTER_SIZE_TYPE ) pxTopOfStack & ( portPOINTER_SIZE_TYPE ) portBYTE_ALIGNMENT_MASK ) == 0UL ) );
@@ -5307,4 +5312,23 @@ when performing module tests). */
 
 #endif
 
+/*---------------------------------------------------------------------------*/
+/*< Support For CmBacktrace >*/
+uint32_t * vTaskStackAddr()
+{
+	return pxCurrentTCB->pxStack;
+}
 
+uint32_t vTaskStackSize()
+{
+	#if (portSTACK_GROWTH > 0)
+		return (pxNewTCB->pxEndOfSatck - pxNewTCB->pxStack + 1);
+	#else
+		return pxCurrentTCB->uxSizeOfStack;
+	#endif
+}
+
+char * vTaskName()
+{
+	return pxCurrentTCB->pcTaskName;
+}

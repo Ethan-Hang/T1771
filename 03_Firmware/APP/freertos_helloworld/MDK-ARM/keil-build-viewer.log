@@ -1,0 +1,179 @@
+
+=================================================== keil-build-viewer v1.6 ==================================================
+ 
+[Search keil project] 1 item(s)
+	g:\STM32\LIXIN\03_Firmware\APP\freertos_helloworld\MDK-ARM\freertos_helloworld.uvprojx
+
+[User input] 
+[Current folder] g:\STM32\LIXIN\03_Firmware\APP\freertos_helloworld\MDK-ARM
+[Encoding] 936
+[Keil project path] g:\STM32\LIXIN\03_Firmware\APP\freertos_helloworld\MDK-ARM\freertos_helloworld.uvprojx
+[Keil project name] freertos_helloworld.uvprojx
+[Is keil v4] 0
+[target name] freertos_helloworld
+[final target name] freertos_helloworld
+
+[Device] STM32F411CEUx
+[Target name] 
+[Output name] freertos_helloworld
+[Output path] freertos_helloworld\
+[Listing path] ..\
+[Is has pack] 1
+[Is enbale LTO] 0
+[Is has user library] 0
+[Is custom scatter file] 0
+
+[freertos_helloworld.uvprojx]  [freertos_helloworld]  [STM32F411CEUx]  [LTO disable]
+ 
+[memory info]
+[name] IRAM [base addr] 0x20000000 [size] 0x00020000 [type] 1 [off-chip] 0 [is pack] 1 [ID] 2 
+[name] IROM [base addr] 0x08000000 [size] 0x00080000 [type] 2 [off-chip] 0 [is pack] 1 [ID] 3 
+
+
+[map file path] g:\STM32\LIXIN\03_Firmware\APP\freertos_helloworld\freertos_helloworld.map
+
+[region info]
+[load region] LR_IROM1
+	[execution region] ER_IROM1, 0x08000000, 0x00080000, 0x0000731C [memory type] 2 [memory ID] 3
+
+	[execution region] RW_IRAM1, 0x20000000, 0x00020000, 0x000059D8 [memory type] 1 [memory ID] 2
+		[ZI block] addr: 0x200000E4, size: 0x000058F4 (22772)
+
+
+[object name max length] 29
+[object path max length] 82
+
+[object in map file]
+[object name] cm_backtrace.o                 [path] ..\Middlewares\Third_Party\Cmbacktrace\cm_backtrace\cm_backtrace.c
+[object name] cmb_fault.o                    [path] ..\Middlewares\Third_Party\Cmbacktrace\cm_backtrace\fault_handler\keil\cmb_fault.S
+[object name] cmsis_os2.o                    [path] ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c
+[object name] elog.o                         [path] ..\Middlewares\EasyLogger\src\elog.c
+[object name] elog_port.o                    [path] ..\Middlewares\EasyLogger\port\elog_port.c
+[object name] elog_utils.o                   [path] ..\Middlewares\EasyLogger\src\elog_utils.c
+[object name] event_groups.o                 [path] ../Middlewares/Third_Party/FreeRTOS/Source/event_groups.c
+[object name] freertos.o                     [path] ../Core/Src/freertos.c
+[object name] gpio.o                         [path] ../Core/Src/gpio.c
+[object name] heap_4.o                       [path] ../Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c
+[object name] list.o                         [path] ../Middlewares/Third_Party/FreeRTOS/Source/list.c
+[object name] main.o                         [path] ../Core/Src/main.c
+[object name] port.o                         [path] ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F/port.c
+[object name] queue.o                        [path] ../Middlewares/Third_Party/FreeRTOS/Source/queue.c
+[object name] segger_rtt.o                   [path] ..\Middlewares\RTT\SEGGER_RTT.c
+[object name] segger_rtt_printf.o            [path] ..\Middlewares\RTT\SEGGER_RTT_printf.c
+[object name] startup_stm32f411xe.o          [path] startup_stm32f411xe.s
+[object name] stm32f4xx_hal.o                [path] ../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c
+[object name] stm32f4xx_hal_cortex.o         [path] ../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c
+[object name] stm32f4xx_hal_gpio.o           [path] ../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c
+[object name] stm32f4xx_hal_msp.o            [path] ../Core/Src/stm32f4xx_hal_msp.c
+[object name] stm32f4xx_hal_rcc.o            [path] ../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c
+[object name] stm32f4xx_hal_tim.o            [path] ../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c
+[object name] stm32f4xx_hal_tim_ex.o         [path] ../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c
+[object name] stm32f4xx_hal_timebase_tim.o   [path] ../Core/Src/stm32f4xx_hal_timebase_tim.c
+[object name] stm32f4xx_hal_uart.o           [path] ../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c
+[object name] stm32f4xx_it.o                 [path] ../Core/Src/stm32f4xx_it.c
+[object name] stream_buffer.o                [path] ../Middlewares/Third_Party/FreeRTOS/Source/stream_buffer.c
+[object name] system_stm32f4xx.o             [path] ../Core/Src/system_stm32f4xx.c
+[object name] tasks.o                        [path] ../Middlewares/Third_Party/FreeRTOS/Source/tasks.c
+[object name] timers.o                       [path] ../Middlewares/Third_Party/FreeRTOS/Source/timers.c
+[object name] usart.o                        [path] ../Core/Src/usart.c
+
+[file path in keil project]
+[old name] startup_stm32f411xe.s          [type] 1   [path] startup_stm32f411xe.s
+[old name] main.c                         [type] 1   [path] ../Core/Src/main.c
+[old name] gpio.c                         [type] 1   [path] ../Core/Src/gpio.c
+[old name] freertos.c                     [type] 1   [path] ../Core/Src/freertos.c
+[old name] usart.c                        [type] 1   [path] ../Core/Src/usart.c
+[old name] stm32f4xx_it.c                 [type] 1   [path] ../Core/Src/stm32f4xx_it.c
+[old name] stm32f4xx_hal_msp.c            [type] 1   [path] ../Core/Src/stm32f4xx_hal_msp.c
+[old name] stm32f4xx_hal_timebase_tim.c   [type] 1   [path] ../Core/Src/stm32f4xx_hal_timebase_tim.c
+[old name] stm32f4xx_hal_rcc.c            [type] 1   [path] ../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c
+[old name] stm32f4xx_hal_rcc_ex.c         [type] 1   [path] ../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c
+[old name] stm32f4xx_hal_flash.c          [type] 1   [path] ../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c
+[old name] stm32f4xx_hal_flash_ex.c       [type] 1   [path] ../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c
+[old name] stm32f4xx_hal_flash_ramfunc.c  [type] 1   [path] ../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c
+[old name] stm32f4xx_hal_gpio.c           [type] 1   [path] ../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c
+[old name] stm32f4xx_hal_dma_ex.c         [type] 1   [path] ../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.c
+[old name] stm32f4xx_hal_dma.c            [type] 1   [path] ../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c
+[old name] stm32f4xx_hal_pwr.c            [type] 1   [path] ../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.c
+[old name] stm32f4xx_hal_pwr_ex.c         [type] 1   [path] ../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c
+[old name] stm32f4xx_hal_cortex.c         [type] 1   [path] ../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c
+[old name] stm32f4xx_hal.c                [type] 1   [path] ../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c
+[old name] stm32f4xx_hal_exti.c           [type] 1   [path] ../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c
+[old name] stm32f4xx_hal_tim.c            [type] 1   [path] ../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c
+[old name] stm32f4xx_hal_tim_ex.c         [type] 1   [path] ../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c
+[old name] stm32f4xx_hal_uart.c           [type] 1   [path] ../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c
+[old name] system_stm32f4xx.c             [type] 1   [path] ../Core/Src/system_stm32f4xx.c
+[old name] croutine.c                     [type] 1   [path] ../Middlewares/Third_Party/FreeRTOS/Source/croutine.c
+[old name] event_groups.c                 [type] 1   [path] ../Middlewares/Third_Party/FreeRTOS/Source/event_groups.c
+[old name] list.c                         [type] 1   [path] ../Middlewares/Third_Party/FreeRTOS/Source/list.c
+[old name] queue.c                        [type] 1   [path] ../Middlewares/Third_Party/FreeRTOS/Source/queue.c
+[old name] stream_buffer.c                [type] 1   [path] ../Middlewares/Third_Party/FreeRTOS/Source/stream_buffer.c
+[old name] tasks.c                        [type] 1   [path] ../Middlewares/Third_Party/FreeRTOS/Source/tasks.c
+[old name] timers.c                       [type] 1   [path] ../Middlewares/Third_Party/FreeRTOS/Source/timers.c
+[old name] cmsis_os2.c                    [type] 1   [path] ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c
+[old name] heap_4.c                       [type] 1   [path] ../Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c
+[old name] port.c                         [type] 1   [path] ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F/port.c
+[old name] SEGGER_RTT.c                   [type] 1   [path] ..\Middlewares\RTT\SEGGER_RTT.c
+[old name] SEGGER_RTT_printf.c            [type] 1   [path] ..\Middlewares\RTT\SEGGER_RTT_printf.c
+[old name] elog.c                         [type] 1   [path] ..\Middlewares\EasyLogger\src\elog.c
+[old name] elog_port.c                    [type] 1   [path] ..\Middlewares\EasyLogger\port\elog_port.c
+[old name] elog_buf.c                     [type] 1   [path] ..\Middlewares\EasyLogger\src\elog_buf.c
+[old name] elog_utils.c                   [type] 1   [path] ..\Middlewares\EasyLogger\src\elog_utils.c
+[old name] cm_backtrace.c                 [type] 1   [path] ..\Middlewares\Third_Party\Cmbacktrace\cm_backtrace\cm_backtrace.c
+[old name] cmb_fault.S                    [type] 1   [path] ..\Middlewares\Third_Party\Cmbacktrace\cm_backtrace\fault_handler\keil\cmb_fault.S
+
+[record region info]
+[load region] LR_IROM1
+	[execution region] ER_IROM1, 0x08000000, 0x00080000, 0x00007324 [type] 2 [ID] 3
+	[execution region] RW_IRAM1, 0x20000000, 0x00020000, 0x000059D8 [type] 1 [ID] 2
+----------------------------------------------------------------------------------------------------------------------------------------------
+                                        FILE(s)                                        |         RAM (byte)       |       FLASH (byte)       |
+----------------------------------------------------------------------------------------------------------------------------------------------
+..\Middlewares\Third_Party\Cmbacktrace\cm_backtrace\cm_backtrace.c():                  |         477              |        5317  [-8]        |
+..\Middlewares\Third_Party\Cmbacktrace\cm_backtrace\fault_handler\keil\cmb_fault.S():  |           0              |          12              |
+../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c():                |        1732              |         404              |
+..\Middlewares\EasyLogger\src\elog.c():                                                |        1324              |        3228              |
+..\Middlewares\EasyLogger\port\elog_port.c():                                          |          16              |         144              |
+..\Middlewares\EasyLogger\src\elog_utils.c():                                          |           0              |         303              |
+../Middlewares/Third_Party/FreeRTOS/Source/event_groups.c():                           |           0              |           0              |
+../Core/Src/freertos.c():                                                              |           4              |         184              |
+../Core/Src/gpio.c():                                                                  |           0              |         100              |
+../Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c():                |       15392              |         756              |
+../Middlewares/Third_Party/FreeRTOS/Source/list.c():                                   |           0              |         148              |
+../Core/Src/main.c():                                                                  |           0              |         342              |
+../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F/port.c():            |          12              |        1026              |
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c():                                  |          64              |        1922              |
+..\Middlewares\RTT\SEGGER_RTT.c():                                                     |        1208              |         584              |
+..\Middlewares\RTT\SEGGER_RTT_printf.c():                                              |           0              |        1310              |
+startup_stm32f411xe.s():                                                               |        1024              |         444              |
+../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c():                                 |           9              |         105              |
+../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c():                          |           0              |         252              |
+../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c():                            |           0              |         456              |
+../Core/Src/stm32f4xx_hal_msp.c():                                                     |           0              |          84              |
+../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c():                             |           0              |        1888              |
+../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c():                             |           0              |         826              |
+../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c():                          |           0              |           4              |
+../Core/Src/stm32f4xx_hal_timebase_tim.c():                                            |          72              |         160              |
+../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c():                            |           0              |        1026              |
+../Core/Src/stm32f4xx_it.c():                                                          |           0              |          34              |
+../Middlewares/Third_Party/FreeRTOS/Source/stream_buffer.c():                          |           0              |           0              |
+../Core/Src/system_stm32f4xx.c():                                                      |           4              |          48              |
+../Middlewares/Third_Party/FreeRTOS/Source/tasks.c():                                  |        1280              |        2842              |
+../Middlewares/Third_Party/FreeRTOS/Source/timers.c():                                 |         300              |        1338              |
+../Core/Src/usart.c():                                                                 |          68              |         192              |
+----------------------------------------------------------------------------------------------------------------------------------------------
+[memory print mode]: 0
+LR_IROM1
+        RAM 1             [0x20000000 | 0x00020000 (131072)]
+                [zi start] 1   [zi end] 8
+                RW_IRAM1  [0x20000000]|¡ö¡õ¡õ¡õ¡õ¡õ¡õ¡õ__________________________________________| (  22.4 KB / 128.0 KB )  17.5%  
+ 
+        FLASH 1           [0x08000000 | 0x00080000 (524288)]
+                ER_IROM1  [0x08000000]|¡ö¡ö________________________________________________| (  28.7 KB / 512.0 KB )   5.6%  [-8]
+ 
+[htm file path] g:\STM32\LIXIN\03_Firmware\APP\freertos_helloworld\MDK-ARM\freertos_helloworld\freertos_helloworld.htm
+Maximum Stack Usage =        696 bytes + Unknown(Cycles, Untraceable Function Pointers)
+ 
+=============================================================================================================================
+
+run time: 0.197 s

@@ -25,6 +25,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include "cm_backtrace.h"
 #include "FreeRTOS.h"
 #include "SEGGER_RTT.h"
 #include "elog.h"
@@ -33,7 +34,8 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+#define HARDWARE_VERSION "V1.0.0"
+#define SOFTWARE_VERSION "V0.1.0"
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -104,6 +106,7 @@ int main(void)
   MX_GPIO_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
+  cm_backtrace_init("CmBacktrace", HARDWARE_VERSION, SOFTWARE_VERSION);
   app_elog_init();
   /* USER CODE END 2 */
 
@@ -186,8 +189,8 @@ void SystemClock_Config(void)
 PUTCHAR_PROTOTYPE
 {
     // vTaskSuspendAll(); // Enter critical section
-    // HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xFFFF);
-    SEGGER_RTT_PutChar(0, ch);
+    HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xFFFF);
+    // SEGGER_RTT_PutChar(0, ch);
     // xTaskResumeAll();  // Exit critical section
     return ch;
 }

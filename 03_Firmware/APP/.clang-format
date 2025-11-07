@@ -1,0 +1,99 @@
+---
+# https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+# 基础代码风格
+BasedOnStyle: LLVM
+
+#---
+# C代码风格
+#Language: C  # clang-format version 20.1.1对语法要求较严格Cpp无法兼容C
+# 如果指明语言为C又会导致.h头文件不使用以下规则
+
+# 缩进规则
+IndentWidth: 4                        # 4空格缩进
+IndentCaseLabels: true                # Switch case缩进
+IndentPPDirectives: None              # 预处理指令不缩进
+IndentWrappedFunctionNames: false     # 函数名换行不缩进
+
+# Tab
+UseTab: Never                         # 禁止使用Tab
+TabWidth: 4                           # Tab等价4空格
+
+# 换行规则
+ColumnLimit: 80                       # 每行最多80字符
+BreakAfterReturnType: None            # 返回类型后不换行
+AlwaysBreakAfterDefinitionReturnType: None
+BreakBeforeBinaryOperators: None      # 二元运算符换行在后
+BreakBeforeBraces: Allman             # 大括号换行规则Allman
+AllowShortFunctionsOnASingleLine: None # 短函数不合并到一行
+AllowShortIfStatementsOnASingleLine: Never # if语句不合并
+AllowShortLoopsOnASingleLine: false   # 循环不合并
+AllowShortBlocksOnASingleLine: Never  # 代码块不合并
+AllowShortCaseLabelsOnASingleLine: false # case标签不合并
+PenaltyBreakBeforeFirstCallParameter: 19 # 换行惩罚值
+PenaltyBreakComment: 300              # 注释换行惩罚
+PenaltyBreakFirstLessLess: 120        # 第一个<<换行惩罚
+PenaltyBreakString: 1000              # 字符串换行惩罚
+PenaltyExcessCharacter: 1000000       # 超过列限制惩罚
+
+# 函数参数换行
+BinPackParameters: true               # 函数声明/定义，参数紧凑排列
+BinPackArguments: true                # 函数调用时，参数紧凑排列
+AllowAllParametersOfDeclarationOnNextLine: false
+AlignAfterOpenBracket: Align          # 开括号对齐
+
+# 对齐规则
+AlignConsecutiveDeclarations:         # 连续变量声明对齐
+  Enabled: true
+  AcrossEmptyLines: true              # 跨空行对齐
+  AcrossComments: true                # 跨注释对齐
+  AlignFunctionDeclarations: true
+  AlignFunctionPointers: true
+  PadOperators: true                  # 填充操作符使对齐更整齐
+
+AlignConsecutiveAssignments:          # 赋值对齐
+  Enabled: true
+  Consecutive: true
+  AcrossEmptyLines: true              # 跨空行对齐
+  AcrossComments: true                # 跨注释对齐
+  AlignCompound: true
+  PadOperators: true
+AlignConsecutiveMacros:               # 连续宏定义对齐
+  Enabled: true
+  AcrossEmptyLines: true              # 跨空行对齐
+  AcrossComments: true                # 跨注释对齐
+  PadOperators: true
+AlignTrailingComments:                # 尾部注释对齐
+  Kind: Always
+  OverEmptyLines: 2
+AlignEscapedNewlines: Left            # 反斜杠对齐方式
+PointerAlignment: Right               # 指针星号右对齐 (void *ptr)
+
+# 空格规则
+SpaceBeforeParens: ControlStatements  # 控制语句后加空格, 函数不加
+SpaceBeforeAssignmentOperators: true  # 赋值运算符前后加空格
+SpaceAfterCStyleCast: false           # C风格转换后不加空格
+SpaceBeforeCpp11BracedList: true      # 初始化列表前加空格
+SpaceInEmptyParentheses: false        # 空括号内不加空格
+SpacesInParentheses: false            # 括号内不加空格
+SpacesInSquareBrackets: false         # 方括号内不加空格
+SpacesInAngles: Never                 # 尖括号内不加空格
+SpaceBeforeSquareBrackets: false      # 方括号前不加空格
+AllowAllArgumentsOnNextLine: true     # 函数调用参数可换行
+
+# 空白行规则
+MaxEmptyLinesToKeep: 2                # 最多保留2个空行
+KeepEmptyLinesAtTheStartOfBlocks: false # 块开始处不保留空行
+SeparateDefinitionBlocks: Leave       # 保持定义块之间的空行
+
+# 其他规则
+DerivePointerAlignment: false         # 不从代码推导指针对齐
+BreakBeforeTernaryOperators: true     # 三元运算符?前换行
+AlwaysBreakBeforeMultilineStrings: false # 多行字符串不强制换行
+BreakStringLiterals: true             # 允许字符串字面量换行
+CompactNamespaces: false              # 命名空间不压缩
+FixNamespaceComments: false           # 不修复命名空间注释
+SortIncludes: Never                   # 不排序头文件（保持原有顺序）
+
+# C语言特定配置
+BreakArrays: false                    # 数组初始化不换行
+IndentGotoLabels: true                # goto标签缩进

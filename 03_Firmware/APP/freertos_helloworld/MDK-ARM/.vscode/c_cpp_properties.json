@@ -14,6 +14,8 @@
                 "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\Middlewares\\RTT",
                 "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\Middlewares\\EasyLogger\\inc",
                 "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\Middlewares\\EasyLogger\\port",
+                "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\Middlewares\\Third_Party\\Cmbacktrace\\cm_backtrace",
+                "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\Middlewares\\Third_Party\\Cmbacktrace\\cm_backtrace\\fault_handler\\keil",
                 "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\MDK-ARM",
                 "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\Core\\Src",
                 "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\Drivers\\STM32F4xx_HAL_Driver\\Src",

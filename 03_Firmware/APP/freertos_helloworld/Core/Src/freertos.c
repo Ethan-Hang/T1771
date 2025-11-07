@@ -57,7 +57,7 @@ const osThreadAttr_t defaultTask_attributes = {
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
-
+void fault_test(void);
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
@@ -114,6 +114,9 @@ void MX_FREERTOS_Init(void) {
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
+    printf("test start\r\n");
+    fault_test();
+    printf("test end\r\n");
     /* Infinite loop */
     for (;;)
     {
@@ -124,6 +127,19 @@ void StartDefaultTask(void *argument)
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
+void fault_test(void)
+{
+  volatile int *SCB_CCR = (volatile int *)0xE000ED14;
+
+  int x, y, z;
+
+  *SCB_CCR |= (1 << 4); // Enable divide by zero trap
+
+  x = 10;
+  y = 0;
+  z = x / y; // This will cause a divide by zero fault
+  printf("z = %d\r\n", z);
+}
 
 /* USER CODE END Application */
 

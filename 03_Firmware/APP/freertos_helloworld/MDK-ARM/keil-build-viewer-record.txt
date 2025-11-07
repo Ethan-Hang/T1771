@@ -1,0 +1,44 @@
+      Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
+      2800          0       2496         21        456          0   cm_backtrace.o
+        12          0          0          0          0          0   cmb_fault.o
+       400          0          0          4       1728          0   cmsis_os2.o
+      2880          0        296         52       1272          0   elog.o
+       144          0          0          0         16          0   elog_port.o
+       268          0         35          0          0          0   elog_utils.o
+         0          0          0          0          0          0   event_groups.o
+       132          0         48          4          0          0   freertos.o
+       100          0          0          0          0          0   gpio.o
+       724          0          0         32      15360          0   heap_4.o
+       148          0          0          0          0          0   list.o
+       342          0          0          0          0          0   main.o
+      1014          0          0         12          0          0   port.o
+      1922          0          0          0         64          0   queue.o
+       584          0          0          0       1208          0   segger_rtt.o
+      1294          0         16          0          0          0   segger_rtt_printf.o
+        36          0        408          0       1024          0   startup_stm32f411xe.o
+        96          0          0          9          0          0   stm32f4xx_hal.o
+       252          0          0          0          0          0   stm32f4xx_hal_cortex.o
+       456          0          0          0          0          0   stm32f4xx_hal_gpio.o
+        84          0          0          0          0          0   stm32f4xx_hal_msp.o
+      1888          0          0          0          0          0   stm32f4xx_hal_rcc.o
+       826          0          0          0          0          0   stm32f4xx_hal_tim.o
+         4          0          0          0          0          0   stm32f4xx_hal_tim_ex.o
+       160          0          0          0         72          0   stm32f4xx_hal_timebase_tim.o
+      1026          0          0          0          0          0   stm32f4xx_hal_uart.o
+        34          0          0          0          0          0   stm32f4xx_it.o
+         0          0          0          0          0          0   stream_buffer.o
+        20          0         24          4          0          0   system_stm32f4xx.o
+      2782          0          0         60       1220          0   tasks.o
+      1318          0          0         20        280          0   timers.o
+       192          0          0          0         68          0   usart.o
+Object Totals
+
+Memory Map of the image
+
+	Load Region LR_IROM1 
+
+		Execution Region ER_IROM1 (Exec base: 0x08000000, Size: 0x0000731C, Max: 0x00080000, END)
+
+		Execution Region RW_IRAM1 (Exec base: 0x20000000, Size: 0x000059D8, Max: 0x00020000, END)
+
+Image component sizes
