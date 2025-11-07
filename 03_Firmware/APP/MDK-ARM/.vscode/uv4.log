@@ -1,9 +1,5 @@
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'F:\keil\ARM\ARM-COMPLIER-506\Bin'
 Build target '04_Software'
-compiling SWC_OTA.c...
-linking...
-Program Size: Code=27580 RO-data=948 RW-data=224 ZI-data=26480  
-FromELF: creating hex file...
 After Build - User command #1: F:\keil\ARM\ARM-COMPLIER-506\bin\fromelf.exe --bin --output=04_Software.bin 04_Software\04_Software.axf
 "04_Software\04_Software.axf" - 0 Error(s), 0 Warning(s).
-Build Time Elapsed:  00:00:03
+Build Time Elapsed:  00:00:01

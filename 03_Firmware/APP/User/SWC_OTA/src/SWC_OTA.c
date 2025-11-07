@@ -44,6 +44,7 @@ const osThreadAttr_t DownloadAppData_task_attributes = {
 static E_Ota_State_t s_e_Ota_State              = WaitReqDownload;
 static uint8_t       s_au8_OtaCmd[4]            = {0};
 uint8_t              g_au8_YmodemRecAB[2][1030] = {0};
+uint32_t             g_u32_datalength           = 0;
 /* extern variables ---------------------------------------------------------*/
 extern QueueHandle_t Q_YmodemReclength;
 QueueHandle_t        Queue_AppDataBuffer;
@@ -212,6 +213,7 @@ static int8_t Key_Scan(void)
             osDelay(10);
             if (GPIO_PIN_RESET == HAL_GPIO_ReadPin(Key_GPIO_Port, Key_Pin))
             {
+			    printf("return 1\r\n");
                 return 1;
             }
         }
@@ -225,6 +227,7 @@ static int8_t Key_Scan(void)
 
 void SoftReset(void)
 {
+	printf("start reset\r\n");
     __set_FAULTMASK(1);
     NVIC_SystemReset();
 }
@@ -250,7 +253,7 @@ void download_appdata_task_runnable(void *argument)
             continue;
         }
 
-        W25Q64_WriteData(pu8_data, (uint32_t)packet_length);
+        W25Q64_WriteData(pu8_data, (uint32_t)g_u32_datalength);
 
         xSemaphoreGive(Semaphore_ExtFlashState);
     }

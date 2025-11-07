@@ -261,7 +261,7 @@ int32_t Ymodem_Receive(uint8_t *buf)
                                 {
                                     memcpy(buf_ptr, packet_data + PACKET_HEADER,
                                            packet_length);
-                                    W25Q64_WriteData(buf_ptr, packet_length);
+                                    W25Q64_WriteData(BLOCK_1, buf_ptr, packet_length);
                                     // RamSource = (uint32_t) buf;
                                     // for (j = 0; (j < packet_length) &&
                                     //             (FlashDestination <
@@ -321,7 +321,7 @@ int32_t Ymodem_Receive(uint8_t *buf)
             break;
         }
     }
-    W25Q64_WriteData_End();
+    W25Q64_WriteData_End(BLOCK_1);
     return size;
 }
 

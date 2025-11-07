@@ -136,6 +136,7 @@ static int32_t Receive_Packet(uint8_t *data, int32_t *length, uint32_t timeout)
     return 0;
 }
 
+extern uint32_t g_u32_datalength;
 /**
  * @brief  Receive a file using the ymodem protocol
  * @param  buf: Address of the first byte
@@ -240,6 +241,7 @@ int32_t Ymodem_Receive(uint8_t (*buf)[1030])
                                 /* Data packet */
                                 else
                                 {
+                                    g_u32_datalength = packet_length;
                                     uint8_t *p_data = packet_data + PACKET_HEADER;
                                     xQueueSend(Queue_AppDataBuffer,
                                                &p_data,

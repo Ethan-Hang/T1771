@@ -10,6 +10,9 @@
         "common.h": "c",
         "aes.h": "c",
         "w25qxx.h": "c",
-        "w25qxx_handler.h": "c"
+        "w25qxx_handler.h": "c",
+        "at24cxx_driver.h": "c",
+        "gpio.h": "c",
+        "ymodem.h": "c"
     }
 }
