@@ -48,7 +48,7 @@ uint8_t Key_Scan(void)
 {
     if (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0) == Bit_RESET)
     {
-        delay_ms(50);
+        // delay_ms(50);
         if (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0) == Bit_RESET)
         {
             return 1;
@@ -70,41 +70,41 @@ void Led_IO_Init(void)
     GPIO_Init(LED_C13_PORT, &GPIO_InitStructure);
 }
 
-void Breathing_light(void)
-{
-    /* C13 呼吸灯测试 */
-    static uint8_t  pwmset;
-    static uint16_t time;
-    static uint8_t  timeflag;
-    static uint8_t  timecount;
+// void Breathing_light(void)
+// {
+//     /* C13 呼吸灯测试 */
+//     static uint8_t  pwmset;
+//     static uint16_t time;
+//     static uint8_t  timeflag;
+//     static uint8_t  timecount;
 
-    /* 呼吸灯 */
-    if (timeflag == 0)
-    {
-        time++;
-        if (time >= 1600)
-            timeflag = 1;
-    }
-    else
-    {
-        time--;
-        if (time == 0)
-            timeflag = 0;
-    }
+//     /* 呼吸灯 */
+//     if (timeflag == 0)
+//     {
+//         time++;
+//         if (time >= 1600)
+//             timeflag = 1;
+//     }
+//     else
+//     {
+//         time--;
+//         if (time == 0)
+//             timeflag = 0;
+//     }
 
-    /* 占空比设置 */
-    pwmset = time / 80;
+//     /* 占空比设置 */
+//     pwmset = time / 80;
 
-    /* 20ms 脉宽 */
-    if (timecount > 20)
-        timecount = 0;
-    else
-        timecount++;
+//     /* 20ms 脉宽 */
+//     if (timecount > 20)
+//         timecount = 0;
+//     else
+//         timecount++;
 
-    if (timecount >= pwmset)
-        GPIO_SetBits(LED_C13_PORT, LED_C13_PIN);
-    else
-        GPIO_ResetBits(LED_C13_PORT, LED_C13_PIN);
+//     if (timecount >= pwmset)
+//         GPIO_SetBits(LED_C13_PORT, LED_C13_PIN);
+//     else
+//         GPIO_ResetBits(LED_C13_PORT, LED_C13_PIN);
 
-    delay_ms(1);
-}
+//     delay_ms(1);
+// }

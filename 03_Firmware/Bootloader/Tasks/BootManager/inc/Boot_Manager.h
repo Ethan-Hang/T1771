@@ -1,6 +1,7 @@
 #ifndef BOOT_MANAGER_H
 #define BOOT_MANAGER_H
 
+#include "Iwdg.h"
 #include "gpio.h"
 #include "elog.h"
 #include "flash.h"
@@ -15,8 +16,10 @@ typedef void (*pFunction)(void);
 #define APP_FLASH_ADDR        0x8008000
 #define APP_BACK_FLASH_ADDR   0x8020000
 #define NO_APP_UPDATE         0x00
-#define APP_DOWNLOADING       0x01
-#define APP_DOWNLOAD_COMPLETE 0x02
+#define APP_DOWNLOADING       0x11
+#define APP_DOWNLOAD_COMPLETE 0x22
+#define APP_FIRST_CHECK_START 0x33
+#define APP_FIRST_CHECKING    0x44
 
 void   Jump_To_App(void);
 int8_t Back_To_App(int32_t fl_size);

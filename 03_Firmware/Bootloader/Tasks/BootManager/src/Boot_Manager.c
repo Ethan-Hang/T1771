@@ -328,6 +328,11 @@ int8_t App_To_ExA(int32_t fl_size)
     return 0;
 }
 
+void System_SoftwareReset(void)
+{
+    __NVIC_SystemReset();
+}
+
 void OTA_StateManager(void)
 {
     uint8_t  t_u8_ota_state = NO_APP_UPDATE;
@@ -351,11 +356,11 @@ void OTA_StateManager(void)
                     ee_ReadBytes((uint8_t *)&t_u32_appsize, 0x05, 4);
                     App_To_ExA(t_u32_appsize);
                     ExB_To_App();
-                    Jump_To_App();
-
-                    ExA_To_App();
-                    /*再执行一次跳转*/
-                    Jump_To_App();
+					
+					t_u8_ota_state = APP_FIRST_CHECK_START;
+					ee_WriteBytes(&t_u8_ota_state, 0x00, 1);
+					// 执行软件复位
+					System_SoftwareReset();
                 }
             }
             else
@@ -364,6 +369,7 @@ void OTA_StateManager(void)
                 Jump_To_App();
             }
             break;
+
         case APP_DOWNLOADING:
             log_a("App dowload failed");
             Jump_To_App();
@@ -380,19 +386,24 @@ void OTA_StateManager(void)
                 App_To_ExA(t_u32_appsize);
                 /*4.外部flashB区的数据搬运到内部App区域中*/
                 ExB_To_App();
+
+                t_u8_ota_state = APP_FIRST_CHECK_START;
+                ee_WriteBytes(&t_u8_ota_state, 0x00, 1);
+                // 执行软件复位
+                System_SoftwareReset();
                 /*5.执行跳转逻辑*/
-                Jump_To_App();
+                // Jump_To_App();
                 /*6.如果运行到这一步，说明数据无效，把外部A区的数据搬运到App中*/
-                ExA_To_App();
+                // ExA_To_App();
                 /*再执行一次跳转*/
-                Jump_To_App();
+                // Jump_To_App();
             }
             else
             {
                 log_a("Boot dowload failed");
                 Jump_To_App();
             }
-            break;
+
         case APP_DOWNLOAD_COMPLETE:
             // 1.读取当前需要更新的App的大小
             ee_ReadBytes((uint8_t *)&t_u32_appsize, 0x01, 4);
@@ -407,18 +418,42 @@ void OTA_StateManager(void)
                 App_To_ExA(t_u32_appsize);
                 /*4.外部flashB区的数据搬运到内部App区域中*/
                 ExB_To_App();
-                /*5.执行跳转逻辑*/
-                Jump_To_App();
-                /*6.如果运行到这一步，说明数据无效，把外部A区的数据搬运到App中*/
-                ExA_To_App();
-                /*再执行一次跳转*/
-                Jump_To_App();
+                t_u8_ota_state = APP_FIRST_CHECK_START;
+                ee_WriteBytes(&t_u8_ota_state, 0x00, 1);
+                // 执行软件复位
+                /*软件复位*/
+                System_SoftwareReset();
             }
             else
             {
                 log_a("Boot dowload failed");
                 Jump_To_App();
+                t_u8_ota_state = NO_APP_UPDATE;
+                ee_WriteBytes(&t_u8_ota_state, 0x00, 1);
+                /*软件复位*/
+                System_SoftwareReset();
             }
+            break;
+
+        case APP_FIRST_CHECK_START:
+            t_u8_ota_state = APP_FIRST_CHECKING;
+            ee_WriteBytes(&t_u8_ota_state, 0x00, 1);
+            /*开看门狗*/
+            IWDG_Init(IWDG_Prescaler_64, 3000);
+            /*5.执行跳转逻辑*/
+            Jump_To_App();
+            break;
+
+        case APP_FIRST_CHECKING:
+            // App校验无效
+            t_u8_ota_state = NO_APP_UPDATE;
+            ee_WriteBytes(&t_u8_ota_state, 0x00, 1);
+            /*软件复位*/
+            System_SoftwareReset();
+            /*如果运行到这一步，说明数据无效，把外部A区的数据搬运到App中*/
+            // ExA_To_App();
+            /*再执行一次跳转*/
+            // Jump_To_App();
             break;
         default:
             break;

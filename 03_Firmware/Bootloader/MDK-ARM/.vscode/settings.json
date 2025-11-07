@@ -13,6 +13,7 @@
         "w25qxx_handler.h": "c",
         "at24cxx_driver.h": "c",
         "gpio.h": "c",
-        "ymodem.h": "c"
+        "ymodem.h": "c",
+        "iwdg.h": "c"
     }
 }

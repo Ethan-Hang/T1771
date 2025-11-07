@@ -1,4 +1,56 @@
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'F:\keil\ARM\ARM-COMPLIER-506\Bin'
 Build target 'Bootloader'
+After Build - User command #1: .\keil-build-viewer.exe
+
+=================================================== keil-build-viewer v1.6 ==================================================
+
+[Bootloader.uvprojx]  [Bootloader]  [STM32F411CEUx]  [LTO disable]
+
+-------------------------------------------------------------------------------------------------------------------------------
+                                 FILE(s)                                |         RAM (byte)       |       FLASH (byte)       |
+-------------------------------------------------------------------------------------------------------------------------------
+..\Middlewares\AES\src\AES.c():                                         |         256              |        1388              |
+..\Bsp\AT24Cxx_Driver\src\AT24Cxx_Driver.c():                           |           0              |         246              |
+..\Tasks\BootManager\src\Boot_Manager.c():                              |        5176              |        1244              |
+..\Middlewares\Ymodem\src\common.c():                                   |           0              |         232              |
+..\Tasks\Debug\src\Debug.c():                                           |           0              |          62              |
+..\Middlewares\EasyLogger\src\elog.c():                                 |        1324              |        2516              |
+..\Middlewares\EasyLogger\port\elog_port.c():                           |           0              |          42              |
+..\Middlewares\EasyLogger\src\elog_utils.c():                           |           0              |         287              |
+..\Core\Src\flash.c():                                                  |           0              |         350              |
+..\Core\Src\gpio.c():                                                   |           0              |         136              |
+..\Bsp\AT24Cxx_Driver\src\iic.c():                                      |           0              |         580              |
+..\Core\Src\Iwdg.c():                                                   |           0              |          38              |
+..\Core\Src\main.c():                                                   |          20              |         297              |
+..\Drivers\STM32F4xx_StdPeriph_Driver\src\misc.c():                     |           0              |          20              |
+..\Middlewares\RTT\SEGGER_RTT.c():                                      |        1208              |         434              |
+..\Core\Src\spi.c():                                                    |           0              |         576              |
+.\startup_stm32f411xe.s():                                              |        1024              |         444              |
+..\Drivers\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_flash.c():          |           0              |         310              |
+..\Drivers\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_gpio.c():           |           0              |         226              |
+..\Core\Src\stm32f4xx_it.c():                                           |           4              |          72              |
+..\Drivers\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_iwdg.c():           |           0              |          68              |
+..\Drivers\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_rcc.c():            |          16              |         328              |
+..\Drivers\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_spi.c():            |           0              |         104              |
+..\Drivers\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_tim.c():            |           0              |          30              |
+..\Drivers\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_usart.c():          |           0              |         214              |
+..\Core\Src\system_stm32f4xx.c():                                       |          20              |         408              |
+..\Core\Src\tim.c():                                                    |           6              |         106              |
+..\Core\Src\usart.c():                                                  |           0              |         174              |
+..\Bsp\W25Qxx\src\w25qxx.c():                                           |          28              |         780              |
+..\Bsp\W25Qxx\src\w25qxx_Handler.c():                                   |        8232              |         632              |
+..\Middlewares\Ymodem\src\ymodem.c():                                   |         260              |         536              |
+-------------------------------------------------------------------------------------------------------------------------------
+LR_IROM1
+        RAM 1             [0x20000000 | 0x00020000 (131072)]
+                RW_IRAM1  [0x20000000]|¡ö¡õ¡õ¡õ¡õ¡õ____________________________________________| (  17.1 KB / 128.0 KB )  13.4%  
+
+        FLASH 1           [0x08000000 | 0x00080000 (524288)]
+                ER_IROM1  [0x08000000]|¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö¡ö______________________| (  18.3 KB /  32.0 KB )  57.2%  
+
+Maximum Stack Usage =       1328 bytes + Unknown(Cycles, Untraceable Function Pointers)
+
+=============================================================================================================================
+
 ".\Objects\Bootloader.axf" - 0 Error(s), 0 Warning(s).
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:02
