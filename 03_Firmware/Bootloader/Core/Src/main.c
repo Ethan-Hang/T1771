@@ -23,6 +23,7 @@ static __IO uint32_t uwTimingDelay;
 RCC_ClocksTypeDef    RCC_Clocks;
 int32_t              fil_size = 0;
 extern uint8_t       au8_test[1024];
+uint32_t             g_JumpInit __attribute__((at(0x2001FFF0)));
 /* Private function prototypes -----------------------------------------------*/
 
 /* Private functions ---------------------------------------------------------*/
@@ -36,6 +37,12 @@ int                  main(void)
 {
     /* Enable Clock Security System(CSS): this will generate an NMI exception
      when HSE clock fails *****************************************************/
+    if (g_JumpInit == 0x55AA55AA)
+    {
+        g_JumpInit = 0xFFFFFFFF;
+        Jump_To_App();
+    }
+
     RCC_ClockSecuritySystemCmd(ENABLE);
 
     /*!< At this stage the microcontroller clock setting is already configured,
@@ -96,7 +103,7 @@ int                  main(void)
         //            }
         //        }
         //		IWDG_ReloadCounter();
-        //delay_ms(100);
+        // delay_ms(100);
     }
 }
 

@@ -3,6 +3,7 @@
 static pFunction jump_to_application;
 uint8_t          au8_test[1024];
 uint8_t          Mem_Read_buffer[4096];
+extern uint32_t  g_JumpInit;
 void             Jump_To_App(void)
 {
     uint32_t stack_addr = *(__IO uint32_t *)APP_FLASH_ADDR;
@@ -356,17 +357,18 @@ void OTA_StateManager(void)
                     ee_ReadBytes((uint8_t *)&t_u32_appsize, 0x05, 4);
                     App_To_ExA(t_u32_appsize);
                     ExB_To_App();
-					
-					t_u8_ota_state = APP_FIRST_CHECK_START;
-					ee_WriteBytes(&t_u8_ota_state, 0x00, 1);
-					// 执行软件复位
-					System_SoftwareReset();
+
+                    t_u8_ota_state = APP_FIRST_CHECK_START;
+                    ee_WriteBytes(&t_u8_ota_state, 0x00, 1);
+                    // 执行软件复位
+                    System_SoftwareReset();
                 }
             }
             else
             {
-                log_a("Boot download failed");
-                Jump_To_App();
+                g_JumpInit = 0x55AA55AA;
+                System_SoftwareReset();
+                // Jump_To_App();
             }
             break;
 
