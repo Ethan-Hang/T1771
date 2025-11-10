@@ -1,20 +1,20 @@
 /* USER CODE BEGIN Header */
 /**
- ******************************************************************************
- * File Name          : freertos.c
- * Description        : Code for freertos applications
- ******************************************************************************
- * @attention
- *
- * Copyright (c) 2025 STMicroelectronics.
- * All rights reserved.
- *
- * This software is licensed under terms that can be found in the LICENSE file
- * in the root directory of this software component.
- * If no LICENSE file comes with this software, it is provided AS-IS.
- *
- ******************************************************************************
- */
+  ******************************************************************************
+  * File Name          : freertos.c
+  * Description        : Code for freertos applications
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2024 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
@@ -25,7 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include <stdio.h>
+#include "usart.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -75,19 +75,19 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END Init */
 
   /* USER CODE BEGIN RTOS_MUTEX */
-    /* add mutexes, ... */
+  /* add mutexes, ... */
   /* USER CODE END RTOS_MUTEX */
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
-    /* add semaphores, ... */
+  /* add semaphores, ... */
   /* USER CODE END RTOS_SEMAPHORES */
 
   /* USER CODE BEGIN RTOS_TIMERS */
-    /* start timers, add new ones, ... */
+  /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
-    /* add queues, ... */
+  /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
@@ -95,30 +95,109 @@ void MX_FREERTOS_Init(void) {
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
-    /* add threads, ... */
+  /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
-    /* add events, ... */
+  /* add events, ... */
   /* USER CODE END RTOS_EVENTS */
 
 }
 
 /* USER CODE BEGIN Header_StartDefaultTask */
+
+__attribute__ ((used, section ("myflash"))) 
+void flash_function_pre()
+{
+	int i = 0;
+	i = i / 3;
+	return;
+}
+
+void flash_function()
+{
+	int i = 0;
+	i = i / 3;
+	return;
+}
+
+__attribute__ ((used, section ("myram"))) 
+void sram_function(void)
+{
+	int i = 0;
+	i = i / 3;
+	return;
+}
+
+__attribute__ ((used, section ("myram"))) 
+void sram_function_pre(void)
+{
+	int i = 0;
+	i = i / 3;
+	return;
+}
+
+uint32_t call_flash_func_time_record(void)
+{
+	uint32_t start_tick = HAL_GetTick();
+	uint32_t end_tick = 0;
+	uint32_t i_counter = 10000000;
+	void (* volatile fpointer_1)(void) = flash_function;
+	void (* volatile fpointer_2)(void) = flash_function_pre;
+	
+	while( i_counter > 0 )
+	{
+		fpointer_1();
+		fpointer_2();
+		i_counter --;
+	}
+	
+	end_tick = HAL_GetTick();
+	
+	return (end_tick - start_tick);
+}
+
+__attribute__ ((used, section ("myram"))) 
+uint32_t call_sram_func_time_record(void)
+{
+	uint32_t start_tick = HAL_GetTick();
+	uint32_t end_tick = 0;
+	uint32_t i_counter = 10000000;
+	void (* volatile fpointer_1)(void) = sram_function;
+	void (* volatile fpointer_2)(void) = sram_function_pre;
+	
+	while( i_counter > 0 )
+	{
+		fpointer_1();
+		fpointer_2();
+		i_counter --;
+	}
+	
+	end_tick = HAL_GetTick();
+	
+	return (end_tick - start_tick);
+}
+
 /**
- * @brief  Function implementing the defaultTask thread.
- * @param  argument: Not used
- * @retval None
- */
+  * @brief  Function implementing the defaultTask thread.
+  * @param  argument: Not used
+  * @retval None
+  */
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
-    /* Infinite loop */
-    for (;;)
-    {
-
-    }
+  /* Infinite loop */
+	printf("hello world\r\n");
+		
+  for(;;)
+  {
+		printf("flash_function execute time = [%d]ms \r\n",call_flash_func_time_record());
+		printf("sram_function execute time = [%d]ms \r\n",call_sram_func_time_record());
+		
+		
+    osDelay(1000);
+  }
   /* USER CODE END StartDefaultTask */
 }
 

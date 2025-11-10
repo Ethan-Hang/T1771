@@ -186,8 +186,8 @@ void SystemClock_Config(void)
 PUTCHAR_PROTOTYPE
 {
     // vTaskSuspendAll(); // Enter critical section
-    // HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xFFFF);
-    SEGGER_RTT_PutChar(0, ch);
+    HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xFFFF);
+    // SEGGER_RTT_PutChar(0, ch);
     // xTaskResumeAll();  // Exit critical section
     return ch;
 }
