@@ -124,6 +124,7 @@ const char *elog_port_get_p_info(void)
 {
 
     /* add your code here */
+	return "";
 }
 
 /**
@@ -135,4 +136,5 @@ const char *elog_port_get_t_info(void)
 {
 
     /* add your code here */
+	return "";
 }
