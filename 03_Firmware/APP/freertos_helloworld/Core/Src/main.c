@@ -29,6 +29,15 @@
 #include "SEGGER_RTT.h"
 #include "elog.h"
 #include "task.h"
+
+extern int Load$$RW_IRAM1$$Base;
+extern int Load$$RW_IRAM1$$Limit;
+
+extern int Image$$RW_IRAM1$$ZI$$Base;
+extern int Image$$RW_IRAM1$$ZI$$Limit;
+
+extern int Image$$RW_IRAM1$$RW$$Base;
+extern int Image$$RW_IRAM1$$RW$$Limit;
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -62,6 +71,31 @@ void MX_FREERTOS_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+void copy_memory(uint32_t sourse, uint32_t destination, uint32_t size)
+{
+  uint32_t *src_ptr = (uint32_t *)sourse;
+  uint32_t *dest_ptr = (uint32_t *)destination;
+  uint32_t *end_ptr = (uint32_t *)(sourse + size);
+
+  while (src_ptr < end_ptr)
+  {
+    *dest_ptr++ = *src_ptr++;
+  }
+}
+
+void zero_initialize(uint32_t start_addr, uint32_t size)
+{
+  uint8_t *current_ptr = (uint8_t *)start_addr;
+  uint8_t *end_ptr = (uint8_t *)(start_addr + size - 16);
+
+  while (current_ptr < end_ptr)
+  {
+    *(uint32_t *)current_ptr = 0;
+    current_ptr ++;
+  }
+  
+}
+
 void app_elog_init(void)
 {
   elog_init();
@@ -74,6 +108,8 @@ void app_elog_init(void)
 
 /* USER CODE END 0 */
 
+uint8_t g_test_date = 12;
+
 /**
   * @brief  The application entry point.
   * @retval int
@@ -81,7 +117,11 @@ void app_elog_init(void)
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+  copy_memory((uint32_t)&Load$$RW_IRAM1$$Base,
+              (uint32_t)&Image$$RW_IRAM1$$RW$$Base,
+              (uint32_t)(&Image$$RW_IRAM1$$RW$$Limit - &Image$$RW_IRAM1$$RW$$Base));
+//  zero_initialize((uint32_t)&Image$$RW_IRAM1$$ZI$$Base,
+//                  (uint32_t)(&Image$$RW_IRAM1$$ZI$$Limit - &Image$$RW_IRAM1$$ZI$$Base));
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -94,30 +134,39 @@ int main(void)
   /* USER CODE END Init */
 
   /* Configure the system clock */
-  SystemClock_Config();
+  //SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
 
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_USART1_UART_Init();
+  //MX_GPIO_Init();
+  //MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  app_elog_init();
+  //app_elog_init();
+
   /* USER CODE END 2 */
 
   /* Init scheduler */
-  osKernelInitialize();  /* Call init function for freertos objects (in freertos.c) */
-  MX_FREERTOS_Init();
+  // osKernelInitialize();  /* Call init function for freertos objects (in freertos.c) */
+  // MX_FREERTOS_Init();
 
   /* Start scheduler */
-  osKernelStart();
+  // osKernelStart();
   /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  printf("%d\r\n", g_test_date);
   while (1)
   {
+    printf("Load$$RW_IRAM1$$Base :[0x%x]\r\n", (uint32_t)&Load$$RW_IRAM1$$Base);
+    printf("Load$$RW_IRAM1$$Limit:[0x%x]\r\n", (uint32_t)&Load$$RW_IRAM1$$Limit);
+    printf("Image$$RW_IRAM1$$ZI$$Base :[0x%x]\r\n", (uint32_t)&Image$$RW_IRAM1$$ZI$$Base);
+    printf("Image$$RW_IRAM1$$ZI$$Limit:[0x%x]\r\n", (uint32_t)&Image$$RW_IRAM1$$ZI$$Limit);
+    printf("Image$$RW_IRAM1$$RW$$Base :[0x%x]\r\n", (uint32_t)&Image$$RW_IRAM1$$RW$$Base);
+    
+    HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -186,8 +235,8 @@ void SystemClock_Config(void)
 PUTCHAR_PROTOTYPE
 {
     // vTaskSuspendAll(); // Enter critical section
-    // HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xFFFF);
-    SEGGER_RTT_PutChar(0, ch);
+    HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xFFFF);
+    // SEGGER_RTT_PutChar(0, ch);
     // xTaskResumeAll();  // Exit critical section
     return ch;
 }
