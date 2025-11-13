@@ -1,60 +1,57 @@
-Load "freertos_helloworld\\freertos_helloworld.axf" 
-Set JLink Project File to "g:\STM32\LIXIN\03_Firmware\APP\freertos_helloworld\MDK-ARM\JLinkSettings.ini"* JLink Info: Device "STM32F411CE" selected.
+*** Using Compiler 'V5.06 update 7 (build 960)', folder: 'F:\keil\ARM\ARM-COMPLIER-506\Bin'
+Build target 'freertos_helloworld'
+compiling bsp_led_driver.c...
+compiling freertos.c...
+linking...
+Program Size: Code=11888 RO-data=512 RW-data=168 ZI-data=19808  
+FromELF: creating hex file...
+After Build - User command #1: keil-build-viewer.exe
 
-JLink info:
-------------
-DLL: V8.84 , compiled Nov  5 2025 18:33:42
-Firmware: J-Link V9 compiled Dec  8 2023 20:16:22
-Hardware: V9.70
-S/N : 602720087 
-Feature(s) : GDB, RDI, FlashBP, FlashDL, JFlash 
+=================================================== keil-build-viewer v1.6 ==================================================
 
-* JLink Info: InitTarget() start
-* JLink Info: SWD selected. Executing JTAG -> SWD switching sequence.
-* JLink Info: DAP initialized successfully.
-* JLink Info: InitTarget() end - Took 19.4ms
-* JLink Info: Found SW-DP with ID 0x2BA01477
-* JLink Info: DPIDR: 0x2BA01477
-* JLink Info: CoreSight SoC-400 or earlier
-* JLink Info: Scanning AP map to find all available APs
-* JLink Info: AP[1]: Stopped AP scan as end of AP map has been reached
-* JLink Info: AP[0]: AHB-AP (IDR: 0x24770011, ADDR: 0x00000000)
-* JLink Info: Iterating through AP map to find AHB-AP to use
-* JLink Info: AP[0]: Core found
-* JLink Info: AP[0]: AHB-AP ROM base: 0xE00FF000
-* JLink Info: CPUID register: 0x410FC241. Implementer code: 0x41 (ARM)
-* JLink Info: Found Cortex-M4 r0p1, Little endian.
-* JLink Info: FPUnit: 6 code (BP) slots and 2 literal slots
-* JLink Info: CoreSight components:
-* JLink Info: ROMTbl[0] @ E00FF000
-* JLink Info: [0][0]: E000E000 CID B105E00D PID 000BB00C SCS-M7
-* JLink Info: [0][1]: E0001000 CID B105E00D PID 003BB002 DWT
-* JLink Info: [0][2]: E0002000 CID B105E00D PID 002BB003 FPB
-* JLink Info: [0][3]: E0000000 CID B105E00D PID 003BB001 ITM
-* JLink Info: [0][4]: E0040000 CID B105900D PID 000BB9A1 TPIU
-* JLink Info: [0][5]: E0041000 CID B105900D PID 000BB925 ETM
-ROMTableAddr = 0xE00FF000
-* JLink Info: Reset type: NORMAL (https://kb.segger.com/J-Link_Reset_Strategies)
-* JLink Info: Reset: Halt core after reset via DEMCR.VC_CORERESET.
-* JLink Info: Reset: Reset device via AIRCR.SYSRESETREQ.
+[freertos_helloworld.uvprojx]  [freertos_helloworld]  [STM32F411CEUx]  [LTO disable]
 
-Target info:
-------------
-Device: STM32F411CEUx
-VTarget = 3.287V
-State of Pins: TCK: 0, TDI: 0, TDO: 0, TMS: 1, TRES: 1, TRST: 1
-Hardware-Breakpoints: 6
-Software-Breakpoints: 8192
-Watchpoints:          4
-JTAG speed: 4000 kHz
+------------------------------------------------------------------------------------------------------------------------------------
+                                   FILE(s)                                   |         RAM (byte)       |       FLASH (byte)       |
+------------------------------------------------------------------------------------------------------------------------------------
+..\BSP\led\driver\src\bsp_led_driver.c():                                    |           0              |         324  [+4]        |
+../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c():      |        1724              |         384              |
+../Middlewares/Third_Party/FreeRTOS/Source/event_groups.c():                 |           0              |           0              |
+../Core/Src/freertos.c():                                                    |          20              |         348              |
+../Core/Src/gpio.c():                                                        |           0              |          60              |
+../Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c():      |       15392              |         512              |
+../Middlewares/Third_Party/FreeRTOS/Source/list.c():                         |           0              |         138              |
+../Core/Src/main.c():                                                        |           0              |         222              |
+../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F/port.c():  |          12              |         798              |
+../Middlewares/Third_Party/FreeRTOS/Source/queue.c():                        |          64              |        1564              |
+startup_stm32f411xe.s():                                                     |        1024              |         444              |
+../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c():                       |          12              |          92              |
+../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c():                |           0              |         158              |
+../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c():                  |           0              |         424              |
+../Core/Src/stm32f4xx_hal_msp.c():                                           |           0              |          56              |
+../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c():                   |           0              |        1536              |
+../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c():                   |           0              |         722              |
+../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c():                |           0              |           4              |
+../Core/Src/stm32f4xx_hal_timebase_tim.c():                                  |          72              |         140              |
+../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c():                  |           0              |         682              |
+../Core/Src/stm32f4xx_it.c():                                                |           0              |          24              |
+../Middlewares/Third_Party/FreeRTOS/Source/stream_buffer.c():                |           0              |           0              |
+../Core/Src/system_stm32f4xx.c():                                            |           4              |          44              |
+../Middlewares/Third_Party/FreeRTOS/Source/tasks.c():                        |        1280              |        2236              |
+../Middlewares/Third_Party/FreeRTOS/Source/timers.c():                       |         300              |        1060              |
+../Core/Src/usart.c():                                                       |          68              |         164              |
+------------------------------------------------------------------------------------------------------------------------------------
+LR_IROM1
+        RAM 1             [0x20000000 | 0x00020000 (131072)]
+                RW_IRAM1  [0x20000000]|¡ö¡õ¡õ¡õ¡õ¡õ¡õ___________________________________________| (  19.5 KB / 128.0 KB )  15.2%  
 
-* JLink Info: Memory map 'after startup completion point' is active
-Erase Done.Programming Done.Verify OK.* JLink Info: Memory map 'before startup completion point' is active
-* JLink Info: Reset type: NORMAL (https://kb.segger.com/J-Link_Reset_Strategies)
-* JLink Info: Reset: Halt core after reset via DEMCR.VC_CORERESET.
-* JLink Info: Reset: Reset device via AIRCR.SYSRESETREQ.
-* JLink Info: Memory map 'after startup completion point' is active
-Application running ...
-* JLink Info: OnDisconnectTarget() start
-* JLink Info: OnDisconnectTarget() end - Took 1.67ms
-Flash Load finished at 12:19:11
+        FLASH 1           [0x08000000 | 0x00080000 (524288)]
+                ER_IROM1  [0x08000000]|¡ö_________________________________________________| (  12.1 KB / 512.0 KB )   2.4%  [+4]
+
+Maximum Stack Usage =        232 bytes + Unknown(Cycles, Untraceable Function Pointers)
+
+=============================================================================================================================
+
+After Build - User command #2: fromelf.exe --text -c "freertos_helloworld\freertos_helloworld.axf" -o "freertos_helloworld\freertos_helloworld.dis"
+"freertos_helloworld\freertos_helloworld.axf" - 0 Error(s), 0 Warning(s).
+Build Time Elapsed:  00:00:03

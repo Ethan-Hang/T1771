@@ -7,11 +7,10 @@
  * 
  * @author Ethan-Hang
  *
- * @brief
+ * @brief Provides HAL APIs for LED control and operations
  *
- * Processing flow:
- *
- * call directly.
+ * Usage:
+ * Call functions directly.
  *
  * @version V1.0 2025-11-13
  *
@@ -38,10 +37,10 @@
 
 typedef enum
 {
-    PROPORTIONN_1_3     = 0,        /* ON:OFF = 1:3                          */
-    PROPORTIONN_1_2     = 1,        /* ON:OFF = 1:2                          */
-    PROPORTIONN_1_1     = 2,        /* ON:OFF = 1:1                          */
-    PROPORTIONN_x_x     = 0xFF,     /* Custom proportion                     */
+    PROPORTION_1_3     = 0,         /* ON:OFF = 1:3                          */
+    PROPORTION_1_2     = 1,         /* ON:OFF = 1:2                          */
+    PROPORTION_1_1     = 2,         /* ON:OFF = 1:1                          */
+    PROPORTION_x_x     = 0xFF,      /* Custom proportion                     */
 } proportion_t;
 
 typedef enum
@@ -82,27 +81,27 @@ typedef led_status_t (*pf_led_control_t)(
 
 typedef struct
 {
-    /******** Target of Internal Status ********/
-    uint8_t                          led_is_init;
-    /************ Target of Features ***********/
-    /* The whole time of blink                 */
-    uint32_t                       cycle_time_ms;
-    /* The times of blink                      */
-    uint32_t                         blink_times;
-    /* The time of light on and off            */
-    proportion_t               proportion_on_off;
+    /************* Target of Internal Status *************/
+    uint8_t                                    led_is_init;
+    /***************** Target of Features ****************/
+    /* The whole time of blink                           */
+    uint32_t                                 cycle_time_ms;
+    /* The times of blink                                */
+    uint32_t                                   blink_times;
+    /* The time of light on and off                      */
+    proportion_t                         proportion_on_off;
 
-    /********** Target of IOs needed ***********/
-    /*      The interface from core layer      */
-    led_operations_t            *p_led_opes_inst;
-    time_base_ms_t               *p_time_base_ms;
-    /*       The interface from OS layer       */
+    /*************** Target of IOs needed ****************/
+    /*      The interface from core layer                */
+    led_operations_t                      *p_led_opes_inst;
+    time_base_ms_t                         *p_time_base_ms;
+    /*       The interface from OS layer                 */
 #ifdef OS_SUPPORTING
-    os_delay_t                  *p_os_time_delay;     
+    os_delay_t                            *p_os_time_delay;     
 #endif // OS_SUPPORTING
 
-    /************* Target of APIs **************/
-    pf_led_control_t           pf_led_controller;
+    /****************** Target of APIs *******************/
+    pf_led_control_t                     pf_led_controller;
 
 } bsp_led_driver_t;
 
@@ -125,12 +124,12 @@ typedef struct
  * @note Must be called before using LED control functions
  * */
 led_status_t led_driver_inst(
-                                      bsp_led_driver_t * const            self,
-                                const led_operations_t * const         led_ops,
+                                bsp_led_driver_t * const                  self,
+                                led_operations_t * const               led_ops,
 #ifdef OS_SUPPORTING
-                                const os_delay_t       * const        os_delay,
+                                os_delay_t       * const              os_delay,
 #endif // OS_SUPPORTING
-                                const time_base_ms_t   * const     time_base_ms
+                                time_base_ms_t   * const           time_base_ms
                             );
 
 //******************************* Declaring *********************************//

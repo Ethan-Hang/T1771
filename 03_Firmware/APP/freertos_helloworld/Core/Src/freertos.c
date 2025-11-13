@@ -38,6 +38,45 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
+// uint test of led operations
+led_status_t led_on_myown (void)
+{
+    printf("LED ON\r\n");
+    return LED_OK;
+}
+led_status_t led_off_myown (void)
+{
+    printf("LED OFF\r\n");
+    return LED_OK;
+}
+led_operations_t led_operations_myown = {
+    .pf_led_on  = led_on_myown,
+    .pf_led_off = led_off_myown,
+};
+
+led_status_t pf_get_time_ms_myown ( uint32_t * const time_stamp)
+{
+    printf("get time now timezero\r\n");
+    *time_stamp = 0;
+    return LED_OK;
+}
+time_base_ms_t time_base_ms_myown = {
+    .pf_get_time_ms = pf_get_time_ms_myown,
+};
+
+led_status_t pf_os_delay_ms_myown ( const uint32_t delay )
+{
+    printf("ps_os_delay now delay\r\n");
+    for ( uint32_t i = 0; i < 1000 * delay; i++ )
+    {
+    }
+    printf("led init finished\r\n");
+    return LED_OK;
+}
+os_delay_t os_delay_myown = {
+    .pf_os_delay_ms = pf_os_delay_ms_myown,
+};
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -120,7 +159,10 @@ void StartDefaultTask(void *argument)
     /* USER CODE BEGIN StartDefaultTask */
     printf("Hello World!\r\n");
     bsp_led_driver_t led1;
-    led_driver_inst(&led1, NULL, NULL, NULL);
+    led_driver_inst(&led1, 
+                    &led_operations_myown, 
+                    &os_delay_myown, 
+                    &time_base_ms_myown);
     printf("Hello World2!\r\n");
 
     /* Infinite loop */
