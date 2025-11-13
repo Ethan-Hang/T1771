@@ -11,11 +11,13 @@
                 "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\Middlewares\\Third_Party\\FreeRTOS\\Source\\portable\\RVDS\\ARM_CM4F",
                 "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\Drivers\\CMSIS\\Device\\ST\\STM32F4xx\\Include",
                 "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\Drivers\\CMSIS\\Include",
+                "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\BSP\\led\\driver\\inc",
                 "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\MDK-ARM",
                 "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\Core\\Src",
                 "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\Drivers\\STM32F4xx_HAL_Driver\\Src",
                 "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\Middlewares\\Third_Party\\FreeRTOS\\Source",
-                "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\Middlewares\\Third_Party\\FreeRTOS\\Source\\portable\\MemMang"
+                "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\Middlewares\\Third_Party\\FreeRTOS\\Source\\portable\\MemMang",
+                "g:\\STM32\\LIXIN\\03_Firmware\\APP\\freertos_helloworld\\BSP\\led\\driver\\src"
             ],
             "defines": [
                 "USE_HAL_DRIVER",

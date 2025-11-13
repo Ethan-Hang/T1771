@@ -57,7 +57,24 @@ void MX_FREERTOS_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+#ifdef __GNUC__
+#define PUTCHAR_PROTOTYPE int _io_putchar(int ch)
+#else
+#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+#endif /* __GNUC__*/
 
+/******************************************************************
+ *@brief  Retargets the C library printf function to the USART.
+ *@param  None
+ *@retval None
+ ******************************************************************/
+PUTCHAR_PROTOTYPE
+{
+    // vTaskSuspendAll();
+    HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
+    // xTaskResumeAll();
+    return ch;
+}
 /* USER CODE END 0 */
 
 /**

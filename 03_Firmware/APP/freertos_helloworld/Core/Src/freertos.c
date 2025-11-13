@@ -26,6 +26,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+
+#include "bsp_led_driver.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -57,22 +59,7 @@ const osThreadAttr_t defaultTask_attributes = {
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
-osThreadId_t defaultTaskHandle_2;
-const osThreadAttr_t defaultTask_attributes_2 = {
-    .name = "defaultTask_2",
-    .stack_size = 128 * 4,
-    .priority = (osPriority_t)osPriorityNormal,
-};
 
-osThreadId_t defaultTaskHandle_3;
-const osThreadAttr_t defaultTask_attributes_3 = {
-    .name = "defaultTask_3",
-    .stack_size = 128 * 4,
-    .priority = (osPriority_t)osPriorityNormal,
-};
-
-void StartDefaultTask_2(void *argument);
-void StartDefaultTask_3(void *argument);
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
@@ -113,12 +100,6 @@ void MX_FREERTOS_Init(void)
                                       &defaultTask_attributes);
 
     /* USER CODE BEGIN RTOS_THREADS */
-    defaultTaskHandle_2 = osThreadNew(StartDefaultTask_2,
-                                      NULL,
-                                      &defaultTask_attributes_2);
-    defaultTaskHandle_3 = osThreadNew(StartDefaultTask_3,
-                                      NULL,
-                                      &defaultTask_attributes_3);
     /* add threads, ... */
     /* USER CODE END RTOS_THREADS */
 
@@ -137,54 +118,21 @@ void MX_FREERTOS_Init(void)
 void StartDefaultTask(void *argument)
 {
     /* USER CODE BEGIN StartDefaultTask */
+    printf("Hello World!\r\n");
+    bsp_led_driver_t led1;
+    led_driver_inst(&led1, NULL, NULL, NULL);
+    printf("Hello World2!\r\n");
+
     /* Infinite loop */
     for (;;)
     {
-        for (int i = 0; i < 720; i++)
-        {
-            printf("This is task1\r\n");
-            osDelay(10);            
-        }
-        vTaskSuspend(defaultTaskHandle);
+
+        osDelay(100);
     }
     /* USER CODE END StartDefaultTask */
 }
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
-/**
- * @brief  Function implementing the defaultTaskHandle_2 thread.
- * @param  argument: Not used
- * @retval None
- */
-/* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask_2(void *argument)
-{
-    /* USER CODE BEGIN StartDefaultTask */
-    /* Infinite loop */
-    for (;;)
-    {
-        printf("This is task2\r\n");
-        osDelay(10);
-    }
-    /* USER CODE END StartDefaultTask */
-}
 
-/**
- * @brief  Function implementing the defaultTaskHandle_3 thread.
- * @param  argument: Not used
- * @retval None
- */
-/* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask_3(void *argument)
-{
-    /* USER CODE BEGIN StartDefaultTask */
-    /* Infinite loop */
-    for (;;)
-    {
-        printf("This is task3\r\n");
-        osDelay(10);
-    }
-    /* USER CODE END StartDefaultTask */
-}
 /* USER CODE END Application */
