@@ -56,8 +56,8 @@ led_operations_t led_operations_myown = {
 
 led_status_t pf_get_time_ms_myown ( uint32_t * const time_stamp)
 {
-    printf("get time now timezero\r\n");
-    *time_stamp = 0;
+    printf("get time now [%lu]ms\r\n", HAL_GetTick());
+    *time_stamp = HAL_GetTick();
     return LED_OK;
 }
 time_base_ms_t time_base_ms_myown = {
@@ -66,11 +66,12 @@ time_base_ms_t time_base_ms_myown = {
 
 led_status_t pf_os_delay_ms_myown ( const uint32_t delay )
 {
-    printf("ps_os_delay now delay\r\n");
-    for ( uint32_t i = 0; i < 1000 * delay; i++ )
-    {
-    }
-    printf("led init finished\r\n");
+    // for ( uint32_t i = 0; i < 1000 * delay; i++ )
+    // {
+
+    // }
+    osDelay(delay);
+    printf("delay [%d]ms finished\r\n", delay);
     return LED_OK;
 }
 os_delay_t os_delay_myown = {
@@ -163,6 +164,7 @@ void StartDefaultTask(void *argument)
                     &led_operations_myown, 
                     &os_delay_myown, 
                     &time_base_ms_myown);
+    led1.pf_led_controller(&led1, 10, 10, PROPORTION_1_1);
     printf("Hello World2!\r\n");
 
     /* Infinite loop */

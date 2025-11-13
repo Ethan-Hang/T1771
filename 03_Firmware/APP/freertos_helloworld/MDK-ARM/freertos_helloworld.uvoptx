@@ -120,7 +120,6 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
-          <Name>?</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -159,7 +158,7 @@
           <Type>0</Type>
           <LineNumber>160</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134222178</Address>
+          <Address>134222190</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -175,7 +174,7 @@
           <Type>0</Type>
           <LineNumber>162</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134222184</Address>
+          <Address>134222196</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -191,7 +190,7 @@
           <Type>0</Type>
           <LineNumber>166</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134222198</Address>
+          <Address>134222210</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>

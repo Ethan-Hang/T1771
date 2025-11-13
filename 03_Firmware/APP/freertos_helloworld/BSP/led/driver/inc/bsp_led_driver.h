@@ -28,31 +28,34 @@
 //******************************** Includes *********************************//
 
 //******************************** Defines **********************************//
-#define INITED            1         /* LED Driver inited flag                */
-#define NOT_INITED        0         /* LED Driver not inited flag            */
+#define INITED             1        /* LED Driver inited flag                */
+#define NOT_INITED         0        /* LED Driver not inited flag            */
 
-#define OS_SUPPORTING               /* Enable OS supporting feature          */
-#define DEBUG             1         /* Enable debug feature                  */
+#define OS_SUPPORTING     (1)       /* Enable OS supporting feature          */
+
+#define DEBUG             (0)       /* Enable debug feature                  */
 #define DEBUG_OUT(X)      printf(X) /* Debug output macro                    */
+
+typedef struct bsp_led_driver bsp_led_driver_t;
 
 typedef enum
 {
-    PROPORTION_1_3     = 0,         /* ON:OFF = 1:3                          */
-    PROPORTION_1_2     = 1,         /* ON:OFF = 1:2                          */
-    PROPORTION_1_1     = 2,         /* ON:OFF = 1:1                          */
-    PROPORTION_x_x     = 0xFF,      /* Custom proportion                     */
+    PROPORTION_1_3       = 0,       /* ON:OFF = 1:3                          */
+    PROPORTION_1_2       = 1,       /* ON:OFF = 1:2                          */
+    PROPORTION_1_1       = 2,       /* ON:OFF = 1:1                          */
+    PROPORTION_x_x       = 0xFF,    /* Custom proportion                     */
 } proportion_t;
 
 typedef enum
 {
-    LED_OK              = 0,        /* Operation successful                  */
-    LED_ERROR           = 1,        /* General error                         */
-    LED_ERRORTIMEOUT    = 2,        /* Timeout error                         */
-    LED_ERRORRESOURCE   = 3,        /* Resource unavailable                  */
-    LED_ERRORPARAMETER  = 4,        /* Invalid parameter                     */
-    LED_ERRORNOMEMORY   = 5,        /* Out of memory                         */
-    LED_ERRORISR        = 6,        /* ISR context error                     */
-    LED_RESERVED        = 0xFF,     /* LED Reserved                          */
+    LED_OK               = 0,       /* Operation successful                  */
+    LED_ERROR            = 1,       /* General error                         */
+    LED_ERRORTIMEOUT     = 2,       /* Timeout error                         */
+    LED_ERRORRESOURCE    = 3,       /* Resource unavailable                  */
+    LED_ERRORPARAMETER   = 4,       /* Invalid parameter                     */
+    LED_ERRORNOMEMORY    = 5,       /* Out of memory                         */
+    LED_ERRORISR         = 6,       /* ISR context error                     */
+    LED_RESERVED         = 0xFF,    /* LED Reserved                          */
 } led_status_t;
 
 typedef struct 
@@ -74,12 +77,13 @@ typedef struct
 #endif // OS_SUPPORTING
 
 typedef led_status_t (*pf_led_control_t)(
-                                        uint32_t,    // cycle_time[ms]
-                                        uint32_t,    // blink_times
-                                        proportion_t // proportion_on_off
-                                                  );
+                                        bsp_led_driver_t * const self,
+                                        uint32_t        cycle_time_ms,
+                                        uint32_t          blink_times,
+                                        proportion_t proportion_on_off
+                                        );
 
-typedef struct
+typedef struct bsp_led_driver
 {
     /************* Target of Internal Status *************/
     uint8_t                                    led_is_init;
@@ -124,12 +128,12 @@ typedef struct
  * @note Must be called before using LED control functions
  * */
 led_status_t led_driver_inst(
-                                bsp_led_driver_t * const                  self,
-                                led_operations_t * const               led_ops,
+                      bsp_led_driver_t * const        self,
+                      led_operations_t * const     led_ops,
 #ifdef OS_SUPPORTING
-                                os_delay_t       * const              os_delay,
+                      os_delay_t       * const    os_delay,
 #endif // OS_SUPPORTING
-                                time_base_ms_t   * const           time_base_ms
+                      time_base_ms_t   * const time_base_ms
                             );
 
 //******************************* Declaring *********************************//
