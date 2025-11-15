@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "gpio.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "bsp_led_handler.h": "c",
+        "bsp_led_driver.h": "c"
     }
 }

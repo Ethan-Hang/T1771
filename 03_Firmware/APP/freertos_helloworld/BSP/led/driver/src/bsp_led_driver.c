@@ -53,8 +53,8 @@ static led_status_t led_blink(bsp_led_driver_t *const self)
 #if DEBUG
         DEBUG_OUT("led control input parameter error\r\n");
 #endif // DEBUG
-
-        return LED_ERRORPARAMETER;
+        ret = LED_ERRORPARAMETER;
+        return ret;
     }
 
     // 2. analyze the featrues
@@ -86,7 +86,8 @@ static led_status_t led_blink(bsp_led_driver_t *const self)
 #if DEBUG
                 DEBUG_OUT("led errormemory\r\n");
 #endif // DEBUG
-                return LED_ERRORNOMEMORY;
+                ret = LED_ERRORNOMEMORY;
+                return ret;
                 // break;
         }
 
@@ -94,7 +95,13 @@ static led_status_t led_blink(bsp_led_driver_t *const self)
         for (uint32_t i = 0; i < blink_times_local; i++)
         {
             // 3.1 Turn LED ON for calculated time
-            self->p_led_opes_inst->pf_led_on();
+            if( LED_OK != self->p_led_opes_inst->pf_led_on() )
+            {
+#if DEBUG
+                DEBUG_OUT("led error during on\r\n");
+#endif // DEBUG
+                return LED_ERROR;
+            }
 #if OS_SUPPORTING
             self->p_os_time_delay->pf_os_delay_ms(led_time_toggle);
 #else
@@ -109,7 +116,13 @@ static led_status_t led_blink(bsp_led_driver_t *const self)
 #endif // OS_SUPPORTING
             
             // 3.2 Turn LED OFF for remaining time
-            self->p_led_opes_inst->pf_led_off();
+            if( LED_OK != self->p_led_opes_inst->pf_led_off() )
+            {
+#if DEBUG
+                DEBUG_OUT("led error during on\r\n");
+#endif // DEBUG
+                return LED_ERROR;
+            }
 #if OS_SUPPORTING
             self->p_os_time_delay->pf_os_delay_ms(
                 cycle_time_local - led_time_toggle
@@ -238,7 +251,6 @@ static led_status_t led_driver_init(bsp_led_driver_t * const self)
     
     return ret;
 }
-
 
 /**
  * @brief Initialize LED driver with dependency injection

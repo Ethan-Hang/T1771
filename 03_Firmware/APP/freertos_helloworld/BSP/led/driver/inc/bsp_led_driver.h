@@ -33,7 +33,7 @@
 
 #define OS_SUPPORTING     (1)       /* Enable OS supporting feature          */
 
-#define DEBUG             (0)       /* Enable debug feature                  */
+#define DEBUG             (1)       /* Enable debug feature                  */
 #define DEBUG_OUT(X)      printf(X) /* Debug output macro                    */
 
 typedef struct bsp_led_driver bsp_led_driver_t;

@@ -1,18 +1,19 @@
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
-       280          0          0          0          0          0   bsp_led_driver.o
+       640          0          0          0          0          0   bsp_led_driver.o
+       596          0          0          0          0          0   bsp_led_handler.o
        380          0          0          4       1720          0   cmsis_os2.o
          0          0          0          0          0          0   event_groups.o
-       264          0         48         20          0          0   freertos.o
-        60          0          0          0          0          0   gpio.o
+       980          0         48         52          0          0   freertos.o
+       112          0          0          0          0          0   gpio.o
        480          0          0         32      15360          0   heap_4.o
        138          0          0          0          0          0   list.o
        222          0          0          0          0          0   main.o
        786          0          0         12          0          0   port.o
-      1564          0          0          0         64          0   queue.o
+      1722          0          0          0         64          0   queue.o
         36          0        408          0       1024          0   startup_stm32f411xe.o
         80          0          0         12          0          0   stm32f4xx_hal.o
        158          0          0          0          0          0   stm32f4xx_hal_cortex.o
-       424          0          0          0          0          0   stm32f4xx_hal_gpio.o
+       438          0          0          0          0          0   stm32f4xx_hal_gpio.o
         56          0          0          0          0          0   stm32f4xx_hal_msp.o
       1536          0          0          0          0          0   stm32f4xx_hal_rcc.o
        710          0          0          0          0          0   stm32f4xx_hal_tim.o
@@ -31,8 +32,8 @@ Memory Map of the image
 
 	Load Region LR_IROM1 
 
-		Execution Region ER_IROM1 (Exec base: 0x08000000, Size: 0x0000322C, Max: 0x00080000, END)
+		Execution Region ER_IROM1 (Exec base: 0x08000000, Size: 0x00003998, Max: 0x00080000, END)
 
-		Execution Region RW_IRAM1 (Exec base: 0x20000000, Size: 0x00004E30, Max: 0x00020000, END)
+		Execution Region RW_IRAM1 (Exec base: 0x20000000, Size: 0x00004E50, Max: 0x00020000, END)
 
 Image component sizes
